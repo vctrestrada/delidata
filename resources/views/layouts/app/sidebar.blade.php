@@ -27,15 +27,18 @@
                         ['Inicio', 'home', 'negocio.inicio', 'negocio.inicio', null],
                         ['Restaurantes', 'building-storefront', 'negocio.restaurantes.index', 'negocio.restaurantes.*', 'menu-restaurantes'],
                         ['Productos', 'book-open', 'negocio.productos.index', 'negocio.productos.*', 'menu-productos'],
+                        ['Ventas', 'receipt-percent', 'negocio.ventas', 'negocio.ventas', 'menu-ventas'],
                         ['Personal', 'user-group', 'negocio.personal.index', 'negocio.personal.*', 'menu-personal'],
                     ],
                     \App\Enums\Rol::Encargado => [
                         ['Inicio', 'home', 'encargado.inicio', 'encargado.inicio', null],
                         ['Menú', 'book-open', 'encargado.menu', 'encargado.menu', 'menu-menu'],
+                        ['Ventas', 'receipt-percent', 'encargado.ventas', 'encargado.ventas', 'menu-ventas'],
                         ['Vendedores', 'user-group', 'encargado.personal.index', 'encargado.personal.*', 'menu-personal'],
                     ],
                     \App\Enums\Rol::Vendedor => [
-                        ['Inicio', 'home', 'ventas.inicio', 'ventas.*', null],
+                        ['Punto de venta', 'shopping-cart', 'ventas.inicio', 'ventas.inicio', null],
+                        ['Mis ventas', 'clock', 'ventas.historial', 'ventas.historial', null],
                     ],
                     default => [
                         ['Inicio', 'home', 'dashboard', 'dashboard', null],

@@ -60,7 +60,6 @@
     <section class="space-y-3">
         <flux:heading size="lg">Próximamente</flux:heading>
         <div class="grid gap-4 md:grid-cols-2">
-            <x-panel.modulo icono="receipt-percent" entrega="5" titulo="Ventas del día" descripcion="Lo que vendió cada vendedor." />
             <x-panel.modulo icono="banknotes" entrega="6" titulo="Gastos" descripcion="Registra los gastos del restaurante." />
         </div>
     </section>

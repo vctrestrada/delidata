@@ -113,8 +113,7 @@
     {{-- Próximos módulos --}}
     <section class="space-y-3">
         <flux:heading size="lg">Próximamente</flux:heading>
-        <div class="grid gap-4 md:grid-cols-3">
-            <x-panel.modulo icono="shopping-cart" entrega="5" titulo="Ventas" descripcion="Punto de venta para tus vendedores." />
+        <div class="grid gap-4 md:grid-cols-2">
             <x-panel.modulo icono="banknotes" entrega="6" titulo="Gastos" descripcion="Gastos de cada restaurante." />
             <x-panel.modulo icono="chart-bar" entrega="7" titulo="Dashboard" descripcion="Velocímetro de gastos contra ventas." />
         </div>

@@ -3,9 +3,11 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LicenciaInactivaController;
 use App\Http\Controllers\RecorridoController;
+use App\Http\Controllers\TicketController;
 use App\Livewire\Admin;
 use App\Livewire\Encargado;
 use App\Livewire\Negocio;
+use App\Livewire\Ventas;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -53,6 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::livewire('productos/categorias', Negocio\Productos\Categorias::class)->name('productos.categorias');
             Route::livewire('productos/{producto}/editar', Negocio\Productos\Formulario::class)->name('productos.editar');
 
+            Route::livewire('ventas', Ventas\Historial::class)->name('ventas');
+
             Route::livewire('personal', Negocio\Personal\Index::class)->name('personal.index');
             Route::livewire('personal/nuevo', Negocio\Personal\Formulario::class)->name('personal.crear');
             Route::livewire('personal/{usuario}/editar', Negocio\Personal\Formulario::class)->name('personal.editar');
@@ -62,6 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::middleware('role:encargado')->prefix('mi-restaurante')->name('encargado.')->group(function () {
             Route::livewire('/', Encargado\Inicio::class)->name('inicio');
             Route::livewire('menu', Encargado\Menu::class)->name('menu');
+            Route::livewire('ventas', Ventas\Historial::class)->name('ventas');
 
             Route::livewire('vendedores', Negocio\Personal\Index::class)->name('personal.index');
             Route::livewire('vendedores/nuevo', Negocio\Personal\Formulario::class)->name('personal.crear');
@@ -70,8 +75,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Vendedor: punto de venta.
         Route::middleware('role:vendedor')->prefix('ventas')->name('ventas.')->group(function () {
-            Route::view('/', 'panel.vendedor')->name('inicio');
+            Route::livewire('/', Ventas\PuntoDeVenta::class)->name('inicio');
+            Route::livewire('historial', Ventas\MisVentas::class)->name('historial');
         });
+
+        // Ticket imprimible (dueño, encargado o el vendedor que hizo la venta).
+        Route::get('tickets/{venta}', TicketController::class)
+            ->middleware('role:dueno|encargado|vendedor')
+            ->name('tickets.ver');
     });
 });
 

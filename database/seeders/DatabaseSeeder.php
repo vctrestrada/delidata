@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             UsuariosDemoSeeder::class,
             NegociosDemoSeeder::class,
             MenuDemoSeeder::class,
+            VentasDemoSeeder::class,
         ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Enums\Rol;
 use App\Models\Negocio;
 use App\Models\Restaurante;
 use App\Models\User;
+use App\Models\Venta;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -77,6 +78,20 @@ trait AlcanceDelNegocio
             ->whereKeyNot($this->usuario()->id)
             ->role(array_map(fn (Rol $r) => $r->value, $this->rolesAsignables()))
             ->when($this->esEncargado(), fn (Builder $q) => $q->where('restaurante_id', $this->usuario()->restaurante_id));
+    }
+
+    /**
+     * Ventas que el usuario puede consultar:
+     * dueño → todo el negocio, encargado → su restaurante, vendedor → solo las suyas.
+     */
+    protected function consultaVentas(): Builder
+    {
+        $usuario = $this->usuario();
+
+        return Venta::query()
+            ->where('negocio_id', $usuario->negocio_id)
+            ->when($this->esEncargado(), fn (Builder $q) => $q->where('restaurante_id', $usuario->restaurante_id))
+            ->when($this->rolActual() === Rol::Vendedor, fn (Builder $q) => $q->where('vendedor_id', $usuario->id));
     }
 
     protected function autorizarRestaurante(Restaurante $restaurante): void
