@@ -10,7 +10,7 @@ use App\Models\Negocio;
 use App\Models\Restaurante;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
+use Carbon\CarbonInterface;
 
 /**
  * Gastos de los mismos ~45 días que VentasDemoSeeder.
@@ -102,7 +102,7 @@ class GastosDemoSeeder extends Seeder
         return round($monto * mt_rand(85, 115) / 100, 2);
     }
 
-    private function gasto(Restaurante $restaurante, ?int $usuario, Carbon $dia, CategoriaGasto $categoria, string $concepto, float $monto, MetodoPago $metodo, ?string $proveedor): void
+    private function gasto(Restaurante $restaurante, ?int $usuario, CarbonInterface $dia, CategoriaGasto $categoria, string $concepto, float $monto, MetodoPago $metodo, ?string $proveedor): void
     {
         Gasto::create([
             'negocio_id' => $restaurante->negocio_id,

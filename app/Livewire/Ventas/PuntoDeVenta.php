@@ -269,4 +269,9 @@ class PuntoDeVenta extends Component
     {
         $this->ultimaVentaId = null;
     }
+
+    public function render()
+    {
+        return view('livewire.ventas.punto-de-venta');
+    }
 }

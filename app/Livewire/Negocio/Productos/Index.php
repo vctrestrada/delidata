@@ -131,4 +131,9 @@ class Index extends Component
 
         Flux::toast(variant: 'success', text: "Se eliminó «{$producto->nombre}».");
     }
+
+    public function render()
+    {
+        return view('livewire.negocio.productos.index');
+    }
 }

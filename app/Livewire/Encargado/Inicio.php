@@ -27,4 +27,9 @@ class Inicio extends Component
     {
         return $this->consultaPersonal()->orderByDesc('activo')->orderBy('name')->get();
     }
+
+    public function render()
+    {
+        return view('livewire.encargado.inicio');
+    }
 }

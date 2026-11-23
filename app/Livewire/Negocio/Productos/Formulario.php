@@ -63,7 +63,7 @@ class Formulario extends Component
                 'categoriaId' => (string) $producto->categoria_id,
                 'precio' => (string) $producto->precio,
                 'costo' => (string) $producto->costo,
-                'activo' => $producto->activo,
+                'activo' => (bool) $producto->activo,
             ]);
         }
 

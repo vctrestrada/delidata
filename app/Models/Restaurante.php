@@ -30,6 +30,10 @@ class Restaurante extends Model
         'negocio_id', 'nombre', 'direccion', 'telefono', 'abre', 'cierra', 'activo',
     ];
 
+    protected $attributes = [
+        'activo' => true,
+    ];
+
     protected function casts(): array
     {
         return [

@@ -30,6 +30,10 @@ class Producto extends Model
         'negocio_id', 'categoria_id', 'nombre', 'descripcion', 'precio', 'costo', 'imagen', 'activo',
     ];
 
+    protected $attributes = [
+        'activo' => true,
+    ];
+
     protected function casts(): array
     {
         return [

@@ -87,7 +87,8 @@ class Index extends Component
         $like = '%'.mb_strtolower(trim($this->buscar)).'%';
 
         return $this->filtroRestaurante($this->consultaGastos())
-            ->whereBetween('fecha', [$desde->toDateString(), $hasta->toDateString()])
+            ->whereDate('fecha', '>=', $desde->toDateString())
+            ->whereDate('fecha', '<=', $hasta->toDateString())
             ->when(CategoriaGasto::tryFrom($this->categoria), fn (Builder $q, CategoriaGasto $c) => $q->where('categoria', $c))
             ->when($this->buscar !== '', fn (Builder $q) => $q->where(fn (Builder $w) => $w
                 ->whereRaw('LOWER(concepto) LIKE ?', [$like])

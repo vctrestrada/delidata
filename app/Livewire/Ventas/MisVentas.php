@@ -62,4 +62,9 @@ class MisVentas extends Component
         $this->abiertaId = null;
         unset($this->ventas, $this->resumen);
     }
+
+    public function render()
+    {
+        return view('livewire.ventas.mis-ventas');
+    }
 }

@@ -128,4 +128,9 @@ class Categorias extends Component
     {
         return Categoria::where('negocio_id', $this->usuario()->negocio_id)->findOrFail($id);
     }
+
+    public function render()
+    {
+        return view('livewire.negocio.productos.categorias');
+    }
 }

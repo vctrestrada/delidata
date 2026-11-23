@@ -7,7 +7,7 @@ use App\Enums\PlanLicencia;
 use App\Models\Licencia;
 use App\Models\Negocio;
 use Flux\Flux;
-use Illuminate\Support\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -84,7 +84,7 @@ class Detalle extends Component
      * La renovación empieza al día siguiente de que termine la licencia vigente
      * (o la última programada). Si no hay ninguna vigente, empieza hoy.
      */
-    public function inicioRenovacion(): Carbon
+    public function inicioRenovacion(): CarbonInterface
     {
         $ultima = $this->negocio->licencias
             ->filter(fn (Licencia $l) => in_array($l->estadoActual(), [
@@ -96,7 +96,7 @@ class Detalle extends Component
         return $ultima ? $ultima->fecha_fin->copy()->addDay() : today();
     }
 
-    public function finRenovacion(): Carbon
+    public function finRenovacion(): CarbonInterface
     {
         return $this->inicioRenovacion()->addMonthsNoOverflow(max(1, $this->meses))->subDay();
     }

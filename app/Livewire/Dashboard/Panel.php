@@ -112,7 +112,8 @@ class Panel extends Component
     private function gastos(array $rango): Builder
     {
         return $this->conRestaurante($this->consultaGastos())
-            ->whereBetween('fecha', [$rango[0]->toDateString(), $rango[1]->toDateString()]);
+            ->whereDate('fecha', '>=', $rango[0]->toDateString())
+            ->whereDate('fecha', '<=', $rango[1]->toDateString());
     }
 
     /** Expresión SQL de la hora según el motor (PostgreSQL en desarrollo, SQLite en pruebas). */

@@ -76,4 +76,9 @@ class Index extends Component
     {
         return $restaurante->personal->filter(fn ($u) => $u->hasRole(Rol::Vendedor->value))->count();
     }
+
+    public function render()
+    {
+        return view('livewire.negocio.restaurantes.index');
+    }
 }

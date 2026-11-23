@@ -78,4 +78,9 @@ class Menu extends Component
 
         Flux::toast(variant: 'success', text: 'Todos los productos están disponibles otra vez.');
     }
+
+    public function render()
+    {
+        return view('livewire.encargado.menu');
+    }
 }

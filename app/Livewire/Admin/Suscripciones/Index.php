@@ -83,4 +83,9 @@ class Index extends Component
                 : "{$negocio->nombre} se desactivó. Su dueño y su personal ya no podrán entrar.",
         );
     }
+
+    public function render()
+    {
+        return view('livewire.admin.suscripciones.index');
+    }
 }

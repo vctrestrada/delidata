@@ -44,4 +44,9 @@ class Inicio extends Component
             'inactivos' => $usuarios->where('activo', false)->count(),
         ];
     }
+
+    public function render()
+    {
+        return view('livewire.negocio.inicio');
+    }
 }

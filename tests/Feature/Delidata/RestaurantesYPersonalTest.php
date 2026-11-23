@@ -46,9 +46,9 @@ class RestaurantesYPersonalTest extends TestCase
         $this->restaurante($negocio);
         $this->actingAs($negocio->dueno);
 
+        // Con el límite alcanzado, el formulario ni siquiera se muestra: regresa al listado.
         Livewire::test(RestauranteFormulario::class)
-            ->set('nombre', 'Segundo local')
-            ->call('guardar');
+            ->assertRedirect(route('negocio.restaurantes.index'));
 
         $this->assertSame(1, Restaurante::where('negocio_id', $negocio->id)->count());
     }

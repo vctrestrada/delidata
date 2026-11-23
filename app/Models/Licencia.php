@@ -28,6 +28,10 @@ class Licencia extends Model
         'fecha_inicio', 'fecha_fin', 'estado', 'notas',
     ];
 
+    protected $attributes = [
+        'estado' => 'activa',
+    ];
+
     protected function casts(): array
     {
         return [

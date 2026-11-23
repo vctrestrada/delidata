@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 
 /**
@@ -83,7 +84,7 @@ class Venta extends Model
     }
 
     /** Ventas de un día (según la zona horaria de la app). */
-    public function scopeDelDia(Builder $query, Carbon|string $dia): Builder
+    public function scopeDelDia(Builder $query, CarbonInterface|string $dia): Builder
     {
         $dia = Carbon::parse($dia);
 

@@ -31,6 +31,10 @@ class Negocio extends Model
         'nombre', 'slug', 'rfc', 'telefono', 'correo', 'direccion', 'dueno_id', 'activo',
     ];
 
+    protected $attributes = [
+        'activo' => true,
+    ];
+
     protected function casts(): array
     {
         return [

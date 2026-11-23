@@ -53,4 +53,9 @@ class Inicio extends Component
             ->sortBy(fn (Negocio $n) => $n->licenciaActual()?->fecha_fin?->timestamp ?? 0)
             ->take(6);
     }
+
+    public function render()
+    {
+        return view('livewire.admin.inicio');
+    }
 }

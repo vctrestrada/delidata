@@ -35,7 +35,7 @@ class GastosTest extends TestCase
             ->set('categoria', CategoriaGasto::Insumos->value)
             ->set('concepto', '10 kg de pastor')
             ->set('monto', '1850.50')
-            ->set('comprobante', UploadedFile::fake()->image('ticket.jpg'))
+            ->set('comprobante', UploadedFile::fake()->create('ticket.pdf', 120, 'application/pdf'))
             ->call('guardar')
             ->assertHasNoErrors();
 

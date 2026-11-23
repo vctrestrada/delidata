@@ -47,6 +47,11 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      *
      * @return array<string, string>
      */
+    /** Valores por defecto al crear el modelo (iguales a los de la base de datos). */
+    protected $attributes = [
+        'activo' => true,
+    ];
+
     protected function casts(): array
     {
         return [
