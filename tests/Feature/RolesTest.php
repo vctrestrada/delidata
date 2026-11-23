@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Enums\EstadoLicencia;
+use App\Enums\PlanLicencia;
 use App\Enums\Rol;
+use App\Models\Restaurante;
 use App\Models\User;
 use Database\Seeders\RolesYPermisosSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,10 +34,31 @@ class RolesTest extends TestCase
         ];
     }
 
+    /** Usuario con rol; si no es super admin, se liga a un restaurante con licencia vigente. */
+    private function usuarioCon(Rol $rol): User
+    {
+        $usuario = User::factory()->create()->assignRole($rol->value);
+
+        if ($rol !== Rol::SuperAdmin) {
+            $restaurante = Restaurante::create(['nombre' => 'Restaurante de prueba']);
+            $restaurante->licencias()->create([
+                'plan' => PlanLicencia::Basico,
+                'max_sucursales' => 1,
+                'precio' => 499,
+                'fecha_inicio' => today()->subDay(),
+                'fecha_fin' => today()->addMonth(),
+                'estado' => EstadoLicencia::Activa,
+            ]);
+            $usuario->restaurante()->associate($restaurante)->save();
+        }
+
+        return $usuario;
+    }
+
     #[DataProvider('rolesYRutas')]
     public function test_cada_rol_es_enviado_a_su_panel(Rol $rol, string $ruta): void
     {
-        $usuario = User::factory()->create()->assignRole($rol->value);
+        $usuario = $this->usuarioCon($rol);
 
         $this->actingAs($usuario)
             ->get(route('dashboard'))
@@ -45,7 +69,7 @@ class RolesTest extends TestCase
 
     public function test_un_vendedor_no_puede_entrar_al_panel_del_dueno(): void
     {
-        $vendedor = User::factory()->create()->assignRole(Rol::Vendedor->value);
+        $vendedor = $this->usuarioCon(Rol::Vendedor);
 
         $this->actingAs($vendedor)->get('/negocio')->assertForbidden();
     }

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen bg-zinc-50">
+        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-white">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
@@ -17,19 +17,33 @@
                     <flux:sidebar.item
                         icon="home"
                         :href="route('dashboard')"
-                        :current="request()->routeIs('dashboard') || ($rol && request()->routeIs($rol->patronRutas()))"
+                        :current="request()->routeIs('dashboard') || ($rol && request()->routeIs(str_replace('.*', '.inicio', $rol->patronRutas())))"
                         wire:navigate
                     >
                         Inicio
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                @if ($rol === \App\Enums\Rol::SuperAdmin)
+                    <flux:sidebar.group heading="Plataforma" class="grid">
+                        <flux:sidebar.item
+                            icon="building-storefront"
+                            :href="route('admin.restaurantes.index')"
+                            :current="request()->routeIs('admin.restaurantes.*')"
+                            wire:navigate
+                            data-tour="menu-restaurantes"
+                        >
+                            Restaurantes
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endif
             </flux:sidebar.nav>
 
             <flux:spacer />
 
             @if ($rol)
                 <div class="px-2 pb-2">
-                    <flux:badge size="sm" color="zinc" icon="shield-check" class="w-full justify-center">
+                    <flux:badge size="sm" color="orange" icon="shield-check" class="w-full justify-center">
                         {{ $rol->etiqueta() }}
                     </flux:badge>
                 </div>

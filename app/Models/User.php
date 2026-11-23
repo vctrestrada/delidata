@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -19,6 +20,9 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
+ * @property int|null $restaurante_id
+ * @property bool $activo
+ * @property list<string>|null $recorridos_vistos
  * @property string $name
  * @property string $email
  * @property Carbon|null $email_verified_at
@@ -47,6 +51,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'activo' => 'boolean',
+            'recorridos_vistos' => 'array',
         ];
     }
 
@@ -74,5 +80,28 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         }
 
         return null;
+    }
+
+    /** Restaurante al que pertenece (null para el super admin). */
+    public function restaurante(): BelongsTo
+    {
+        return $this->belongsTo(Restaurante::class);
+    }
+
+    /** ¿Ya vio el recorrido guiado de esta pantalla? */
+    public function haVistoRecorrido(string $clave): bool
+    {
+        return in_array($clave, $this->recorridos_vistos ?? [], true);
+    }
+
+    /** Guarda que el usuario ya vio un recorrido guiado. */
+    public function marcarRecorridoVisto(string $clave): void
+    {
+        if ($this->haVistoRecorrido($clave)) {
+            return;
+        }
+
+        $this->recorridos_vistos = [...($this->recorridos_vistos ?? []), $clave];
+        $this->save();
     }
 }
