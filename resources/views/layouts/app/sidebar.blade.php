@@ -115,6 +115,13 @@
 
                     <flux:menu.separator />
 
+                    <form method="POST" action="{{ auth()->user()->recorridosDesactivados() ? route('recorridos.reiniciar') : route('recorridos.desactivar') }}" class="w-full">
+                        @csrf
+                        <flux:menu.item as="button" type="submit" icon="academic-cap" class="w-full cursor-pointer">
+                            {{ auth()->user()->recorridosDesactivados() ? 'Volver a mostrar las guías' : 'Desactivar guías automáticas' }}
+                        </flux:menu.item>
+                    </form>
+
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <flux:menu.item

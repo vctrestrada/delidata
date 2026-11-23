@@ -78,26 +78,26 @@
         </section>
 
         <div class="grid gap-4 sm:grid-cols-2 xl:col-span-2" data-tour="indicadores">
-            <div class="rounded-xl border border-orange-200 bg-orange-50 p-5">
+            <div class="tarjeta-interactiva rounded-xl border border-orange-200 bg-orange-50 p-5">
                 <flux:text class="text-sm">Ventas</flux:text>
-                <div class="text-3xl font-semibold tracking-tight text-zinc-900">${{ number_format($i['ventas'], 2) }}</div>
+                <div class="text-3xl font-semibold tracking-tight text-zinc-900 tabular-nums" data-contador>${{ number_format($i['ventas'], 2) }}</div>
                 <x-panel.variacion :valor="$i['variacionVentas']" />
             </div>
             <div class="rounded-xl border border-zinc-200 bg-white p-5">
                 <flux:text class="text-sm">Gastos</flux:text>
-                <div class="text-3xl font-semibold tracking-tight text-zinc-900">${{ number_format($i['gastos'], 2) }}</div>
+                <div class="text-3xl font-semibold tracking-tight text-zinc-900 tabular-nums" data-contador>${{ number_format($i['gastos'], 2) }}</div>
                 <x-panel.variacion :valor="$i['variacionGastos']" inverso />
             </div>
             <div @class(['rounded-xl border p-5', 'border-green-200 bg-green-50' => $i['utilidad'] >= 0, 'border-red-200 bg-red-50' => $i['utilidad'] < 0])>
                 <flux:text class="text-sm">{{ $i['utilidad'] >= 0 ? 'Utilidad' : 'Pérdida' }}</flux:text>
-                <div @class(['text-3xl font-semibold tracking-tight', 'text-green-700' => $i['utilidad'] >= 0, 'text-red-700' => $i['utilidad'] < 0])>
+                <div data-contador @class(['text-3xl font-semibold tracking-tight tabular-nums', 'text-green-700' => $i['utilidad'] >= 0, 'text-red-700' => $i['utilidad'] < 0])>
                     ${{ number_format(abs($i['utilidad']), 2) }}
                 </div>
                 <x-panel.variacion :valor="$i['variacionUtilidad']" />
             </div>
             <div class="rounded-xl border border-zinc-200 bg-white p-5">
                 <flux:text class="text-sm">Ticket promedio</flux:text>
-                <div class="text-3xl font-semibold tracking-tight text-zinc-900">${{ number_format($i['ticketPromedio'], 2) }}</div>
+                <div class="text-3xl font-semibold tracking-tight text-zinc-900 tabular-nums" data-contador>${{ number_format($i['ticketPromedio'], 2) }}</div>
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="text-xs text-zinc-500">{{ number_format($i['tickets']) }} ventas</span>
                     <x-panel.variacion :valor="$i['variacionTickets']" />

@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🍽️ Delidata
+<img src="docs/logo-delidata.png" alt="Delidata" width="96">
+
+# Delidata
 
 **Software para restaurantes con una o varias sucursales:** punto de venta, control de gastos y un dashboard en tiempo real con velocímetro de gastos contra ventas.
 
@@ -61,7 +63,7 @@ Super admin ──► administra las suscripciones (planes, vigencia, renovacion
 | **Gastos** | Seis categorías, comprobante en foto o PDF guardado de forma privada, y utilidad del periodo. |
 | **Dashboard** | Velocímetro de gastos contra ventas, tendencia diaria, comparación entre restaurantes, top de productos, horas pico y formas de pago (ApexCharts). |
 | **Tiempo real** | Con Reverb, cada venta aparece al instante en el panel del dueño. Si un producto se agota, desaparece del punto de venta. |
-| **Recorridos guiados** | Cada pantalla con un CRUD explica su uso paso a paso la primera vez (Driver.js). El avance se guarda por usuario. |
+| **Recorridos guiados** | Cada pantalla explica su uso paso a paso la primera vez, para todos los roles (Driver.js). Se pueden saltar, desactivar para siempre o volver a activar desde el menú del usuario. |
 
 ---
 

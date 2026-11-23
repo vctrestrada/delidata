@@ -100,10 +100,33 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return $this->belongsTo(Restaurante::class);
     }
 
-    /** ¿Ya vio el recorrido guiado de esta pantalla? */
+    /** Marca especial: el usuario pidió no ver más guías automáticas. */
+    public const RECORRIDOS_DESACTIVADOS = '*';
+
+    /** ¿Ya vio el recorrido guiado de esta pantalla (o desactivó todos)? */
     public function haVistoRecorrido(string $clave): bool
     {
-        return in_array($clave, $this->recorridos_vistos ?? [], true);
+        $vistos = $this->recorridos_vistos ?? [];
+
+        return in_array(self::RECORRIDOS_DESACTIVADOS, $vistos, true) || in_array($clave, $vistos, true);
+    }
+
+    public function recorridosDesactivados(): bool
+    {
+        return in_array(self::RECORRIDOS_DESACTIVADOS, $this->recorridos_vistos ?? [], true);
+    }
+
+    /** No volver a iniciar guías automáticamente. */
+    public function desactivarRecorridos(): void
+    {
+        $this->marcarRecorridoVisto(self::RECORRIDOS_DESACTIVADOS);
+    }
+
+    /** Volver a mostrar todas las guías desde el principio. */
+    public function reiniciarRecorridos(): void
+    {
+        $this->recorridos_vistos = [];
+        $this->save();
     }
 
     /** Guarda que el usuario ya vio un recorrido guiado. */

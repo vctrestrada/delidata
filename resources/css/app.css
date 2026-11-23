@@ -23,6 +23,33 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
+    /* Animaciones de Delidata (se usan como animate-aparecer, animate-flotar…) */
+    --animate-aparecer: aparecer 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-aparecer-suave: aparecer-suave 0.35s ease-out both;
+    --animate-flotar: flotar 9s ease-in-out infinite;
+    --animate-flotar-lento: flotar 14s ease-in-out infinite reverse;
+    --animate-latido: latido 2.4s ease-in-out infinite;
+
+    @keyframes aparecer {
+        from { opacity: 0; transform: translateY(14px) scale(0.985); }
+        to { opacity: 1; transform: none; }
+    }
+
+    @keyframes aparecer-suave {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    @keyframes flotar {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(18px, -22px); }
+    }
+
+    @keyframes latido {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgb(249 115 22 / 0.35); }
+        50% { transform: scale(1.03); box-shadow: 0 0 0 10px rgb(249 115 22 / 0); }
+    }
+
     /* Paleta Delidata: blanco + naranja */
     --color-accent: var(--color-orange-500);
     --color-accent-content: var(--color-orange-600);
@@ -89,4 +116,104 @@ select:focus[data-flux-control] {
 
 .driver-popover.delidata-recorrido .driver-popover-close-btn {
     @apply text-zinc-400 hover:text-orange-600;
+}
+
+/* ---------------------------------------------------------------
+   Estilo general
+---------------------------------------------------------------- */
+::selection {
+    background-color: var(--color-orange-200);
+    color: var(--color-zinc-900);
+}
+
+html {
+    scrollbar-color: var(--color-zinc-300) transparent;
+}
+
+/* Elemento activo del menú lateral en naranja */
+[data-flux-sidebar-item][data-current] {
+    background-color: var(--color-orange-50) !important;
+    border-color: var(--color-orange-200) !important;
+    color: var(--color-orange-700) !important;
+}
+
+[data-flux-sidebar-item] {
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+[data-flux-sidebar-item]:hover:not([data-current]) {
+    transform: translateX(2px);
+}
+
+/* Al navegar entre pantallas, el contenido entra con una animación suave */
+[data-flux-main] > * {
+    animation: var(--animate-aparecer-suave);
+}
+
+/* Las tarjetas y tablas de cada pantalla aparecen escalonadas */
+[data-flux-main] > div > * {
+    animation: var(--animate-aparecer);
+}
+[data-flux-main] > div > *:nth-child(2) { animation-delay: 60ms; }
+[data-flux-main] > div > *:nth-child(3) { animation-delay: 120ms; }
+[data-flux-main] > div > *:nth-child(4) { animation-delay: 180ms; }
+[data-flux-main] > div > *:nth-child(5) { animation-delay: 240ms; }
+[data-flux-main] > div > *:nth-child(n+6) { animation-delay: 300ms; }
+
+/* Tarjetas con elevación al pasar el cursor */
+.tarjeta-interactiva {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.tarjeta-interactiva:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -12px rgb(249 115 22 / 0.35);
+}
+
+/* Revelado al hacer scroll (página de inicio) */
+.revelar {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--retraso, 0ms);
+}
+.revelar.revelado {
+    opacity: 1;
+    transform: none;
+}
+
+/* Trazo que se dibuja (velocímetros ilustrativos) */
+.trazo-animado {
+    stroke-dasharray: 260;
+    stroke-dashoffset: 260;
+    animation: dibujar-trazo 1.6s 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes dibujar-trazo {
+    to { stroke-dashoffset: 0; }
+}
+
+/* Globo del recorrido: entrada suave */
+.driver-popover.delidata-recorrido {
+    animation: var(--animate-aparecer);
+}
+
+.driver-popover.delidata-recorrido .delidata-saltar {
+    @apply mr-auto rounded-lg px-2 py-1.5 text-xs font-medium text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800;
+}
+
+.driver-popover.delidata-recorrido .delidata-no-mostrar {
+    @apply mt-3 block w-full border-t border-zinc-100 pt-3 text-left text-xs text-zinc-400 hover:text-orange-600;
+}
+
+/* Respeta a quien prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .revelar { opacity: 1; transform: none; }
+}
+
+[x-cloak] {
+    display: none !important;
 }

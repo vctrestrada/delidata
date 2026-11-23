@@ -22,7 +22,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Pantalla que ve el personal cuando no puede operar.
     Route::get('acceso-no-disponible', LicenciaInactivaController::class)->name('licencia.inactiva');
 
-    // Marca un recorrido guiado como visto.
+    // Recorridos guiados: desactivar, reiniciar o marcar uno como visto.
+    Route::post('recorridos/desactivar', [RecorridoController::class, 'desactivar'])->name('recorridos.desactivar');
+    Route::post('recorridos/reiniciar', [RecorridoController::class, 'reiniciar'])->name('recorridos.reiniciar');
     Route::post('recorridos/{clave}', RecorridoController::class)->name('recorridos.visto');
 
     /*
