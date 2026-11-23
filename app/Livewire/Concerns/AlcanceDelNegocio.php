@@ -3,6 +3,7 @@
 namespace App\Livewire\Concerns;
 
 use App\Enums\Rol;
+use App\Models\Gasto;
 use App\Models\Negocio;
 use App\Models\Restaurante;
 use App\Models\User;
@@ -92,6 +93,14 @@ trait AlcanceDelNegocio
             ->where('negocio_id', $usuario->negocio_id)
             ->when($this->esEncargado(), fn (Builder $q) => $q->where('restaurante_id', $usuario->restaurante_id))
             ->when($this->rolActual() === Rol::Vendedor, fn (Builder $q) => $q->where('vendedor_id', $usuario->id));
+    }
+
+    /** Gastos visibles: dueño → todo el negocio, encargado → su restaurante. */
+    protected function consultaGastos(): Builder
+    {
+        return Gasto::query()
+            ->where('negocio_id', $this->usuario()->negocio_id)
+            ->when($this->esEncargado(), fn (Builder $q) => $q->where('restaurante_id', $this->usuario()->restaurante_id));
     }
 
     protected function autorizarRestaurante(Restaurante $restaurante): void

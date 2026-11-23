@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\ComprobanteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LicenciaInactivaController;
 use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\TicketController;
 use App\Livewire\Admin;
 use App\Livewire\Encargado;
+use App\Livewire\Gastos;
 use App\Livewire\Negocio;
 use App\Livewire\Ventas;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +58,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::livewire('productos/{producto}/editar', Negocio\Productos\Formulario::class)->name('productos.editar');
 
             Route::livewire('ventas', Ventas\Historial::class)->name('ventas');
+            Route::livewire('gastos', Gastos\Index::class)->name('gastos.index');
+            Route::livewire('gastos/nuevo', Gastos\Formulario::class)->name('gastos.crear');
+            Route::livewire('gastos/{gasto}/editar', Gastos\Formulario::class)->name('gastos.editar');
 
             Route::livewire('personal', Negocio\Personal\Index::class)->name('personal.index');
             Route::livewire('personal/nuevo', Negocio\Personal\Formulario::class)->name('personal.crear');
@@ -67,6 +72,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::livewire('/', Encargado\Inicio::class)->name('inicio');
             Route::livewire('menu', Encargado\Menu::class)->name('menu');
             Route::livewire('ventas', Ventas\Historial::class)->name('ventas');
+            Route::livewire('gastos', Gastos\Index::class)->name('gastos.index');
+            Route::livewire('gastos/nuevo', Gastos\Formulario::class)->name('gastos.crear');
+            Route::livewire('gastos/{gasto}/editar', Gastos\Formulario::class)->name('gastos.editar');
 
             Route::livewire('vendedores', Negocio\Personal\Index::class)->name('personal.index');
             Route::livewire('vendedores/nuevo', Negocio\Personal\Formulario::class)->name('personal.crear');
@@ -78,6 +86,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::livewire('/', Ventas\PuntoDeVenta::class)->name('inicio');
             Route::livewire('historial', Ventas\MisVentas::class)->name('historial');
         });
+
+        // Comprobante privado de un gasto (dueño o encargado del restaurante).
+        Route::get('gastos/{gasto}/comprobante', ComprobanteController::class)
+            ->middleware('role:dueno|encargado')
+            ->name('gastos.comprobante');
 
         // Ticket imprimible (dueño, encargado o el vendedor que hizo la venta).
         Route::get('tickets/{venta}', TicketController::class)

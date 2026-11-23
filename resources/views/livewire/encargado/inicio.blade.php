@@ -57,12 +57,6 @@
         </section>
     </div>
 
-    <section class="space-y-3">
-        <flux:heading size="lg">Próximamente</flux:heading>
-        <div class="grid gap-4 md:grid-cols-2">
-            <x-panel.modulo icono="banknotes" entrega="6" titulo="Gastos" descripcion="Registra los gastos del restaurante." />
-        </div>
-    </section>
 
     <x-recorrido clave="encargado.inicio" :pasos="[
         ['titulo' => 'Bienvenido, encargado', 'descripcion' => 'Desde aquí administras tu restaurante y a sus vendedores. Te muestro cómo.'],

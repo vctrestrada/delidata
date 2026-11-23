@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             NegociosDemoSeeder::class,
             MenuDemoSeeder::class,
             VentasDemoSeeder::class,
+            GastosDemoSeeder::class,
         ]);
     }
 }

@@ -114,7 +114,6 @@
     <section class="space-y-3">
         <flux:heading size="lg">Próximamente</flux:heading>
         <div class="grid gap-4 md:grid-cols-2">
-            <x-panel.modulo icono="banknotes" entrega="6" titulo="Gastos" descripcion="Gastos de cada restaurante." />
             <x-panel.modulo icono="chart-bar" entrega="7" titulo="Dashboard" descripcion="Velocímetro de gastos contra ventas." />
         </div>
     </section>
