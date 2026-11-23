@@ -72,6 +72,16 @@ class Negocio extends Model
         return $this->hasMany(Restaurante::class);
     }
 
+    public function categorias(): HasMany
+    {
+        return $this->hasMany(Categoria::class)->orderBy('orden')->orderBy('nombre');
+    }
+
+    public function productos(): HasMany
+    {
+        return $this->hasMany(Producto::class);
+    }
+
     public function licencias(): HasMany
     {
         return $this->hasMany(Licencia::class)->orderByDesc('fecha_inicio')->orderByDesc('id');

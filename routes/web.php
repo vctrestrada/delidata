@@ -48,6 +48,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::livewire('restaurantes/nuevo', Negocio\Restaurantes\Formulario::class)->name('restaurantes.crear');
             Route::livewire('restaurantes/{restaurante}/editar', Negocio\Restaurantes\Formulario::class)->name('restaurantes.editar');
 
+            Route::livewire('productos', Negocio\Productos\Index::class)->name('productos.index');
+            Route::livewire('productos/nuevo', Negocio\Productos\Formulario::class)->name('productos.crear');
+            Route::livewire('productos/categorias', Negocio\Productos\Categorias::class)->name('productos.categorias');
+            Route::livewire('productos/{producto}/editar', Negocio\Productos\Formulario::class)->name('productos.editar');
+
             Route::livewire('personal', Negocio\Personal\Index::class)->name('personal.index');
             Route::livewire('personal/nuevo', Negocio\Personal\Formulario::class)->name('personal.crear');
             Route::livewire('personal/{usuario}/editar', Negocio\Personal\Formulario::class)->name('personal.editar');
@@ -56,6 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Encargado: su restaurante y sus vendedores.
         Route::middleware('role:encargado')->prefix('mi-restaurante')->name('encargado.')->group(function () {
             Route::livewire('/', Encargado\Inicio::class)->name('inicio');
+            Route::livewire('menu', Encargado\Menu::class)->name('menu');
 
             Route::livewire('vendedores', Negocio\Personal\Index::class)->name('personal.index');
             Route::livewire('vendedores/nuevo', Negocio\Personal\Formulario::class)->name('personal.crear');

@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             RolesYPermisosSeeder::class,
             UsuariosDemoSeeder::class,
             NegociosDemoSeeder::class,
+            MenuDemoSeeder::class,
         ]);
     }
 }

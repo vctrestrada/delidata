@@ -26,10 +26,12 @@
                     \App\Enums\Rol::Dueno => [
                         ['Inicio', 'home', 'negocio.inicio', 'negocio.inicio', null],
                         ['Restaurantes', 'building-storefront', 'negocio.restaurantes.index', 'negocio.restaurantes.*', 'menu-restaurantes'],
+                        ['Productos', 'book-open', 'negocio.productos.index', 'negocio.productos.*', 'menu-productos'],
                         ['Personal', 'user-group', 'negocio.personal.index', 'negocio.personal.*', 'menu-personal'],
                     ],
                     \App\Enums\Rol::Encargado => [
                         ['Inicio', 'home', 'encargado.inicio', 'encargado.inicio', null],
+                        ['Menú', 'book-open', 'encargado.menu', 'encargado.menu', 'menu-menu'],
                         ['Vendedores', 'user-group', 'encargado.personal.index', 'encargado.personal.*', 'menu-personal'],
                     ],
                     \App\Enums\Rol::Vendedor => [

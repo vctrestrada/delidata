@@ -113,8 +113,7 @@
     {{-- Próximos módulos --}}
     <section class="space-y-3">
         <flux:heading size="lg">Próximamente</flux:heading>
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <x-panel.modulo icono="book-open" entrega="4" titulo="Productos y menú" descripcion="Catálogo y precios por restaurante." />
+        <div class="grid gap-4 md:grid-cols-3">
             <x-panel.modulo icono="shopping-cart" entrega="5" titulo="Ventas" descripcion="Punto de venta para tus vendedores." />
             <x-panel.modulo icono="banknotes" entrega="6" titulo="Gastos" descripcion="Gastos de cada restaurante." />
             <x-panel.modulo icono="chart-bar" entrega="7" titulo="Dashboard" descripcion="Velocímetro de gastos contra ventas." />
@@ -126,6 +125,7 @@
         ['elemento' => '[data-tour=resumen]', 'titulo' => 'Tu resumen', 'descripcion' => 'Cuántos restaurantes llevas de los que permite tu plan, cuánto personal tienes y hasta cuándo está vigente tu suscripción.'],
         ['elemento' => '[data-tour=nuevo-restaurante]', 'titulo' => 'Paso 1: registra un restaurante', 'descripcion' => 'Empieza aquí. Cada local de tu negocio es un restaurante. Si llegas al límite de tu plan, el botón se desactiva.', 'lado' => 'left'],
         ['elemento' => '[data-tour=restaurantes]', 'titulo' => 'Tus restaurantes', 'descripcion' => 'Aquí aparecen con su horario, su encargado y cuántos vendedores tienen. Da clic en uno para editarlo.', 'lado' => 'top'],
-        ['elemento' => '[data-tour=menu-personal]', 'titulo' => 'Paso 2: agrega a tu personal', 'descripcion' => 'En «Personal» creas las cuentas de tus encargados y vendedores y les asignas su restaurante.', 'lado' => 'right'],
+        ['elemento' => '[data-tour=menu-productos]', 'titulo' => 'Paso 2: arma tu menú', 'descripcion' => 'En «Productos» creas tus categorías y productos, y eliges en qué restaurantes se vende cada uno.', 'lado' => 'right'],
+        ['elemento' => '[data-tour=menu-personal]', 'titulo' => 'Paso 3: agrega a tu personal', 'descripcion' => 'En «Personal» creas las cuentas de tus encargados y vendedores y les asignas su restaurante.', 'lado' => 'right'],
     ]" />
 </div>

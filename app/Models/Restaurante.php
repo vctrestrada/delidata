@@ -6,6 +6,7 @@ use App\Enums\Rol;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
@@ -55,6 +56,14 @@ class Restaurante extends Model
     public function vendedores(): HasMany
     {
         return $this->personal()->role(Rol::Vendedor->value);
+    }
+
+    /** Productos del catálogo que se venden en este restaurante. */
+    public function productos(): BelongsToMany
+    {
+        return $this->belongsToMany(Producto::class, 'producto_restaurante')
+            ->withPivot(['precio', 'disponible'])
+            ->withTimestamps();
     }
 
     public function scopeDelNegocio(Builder $query, int $negocioId): Builder

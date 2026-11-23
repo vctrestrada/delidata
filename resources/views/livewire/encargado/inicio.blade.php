@@ -59,8 +59,7 @@
 
     <section class="space-y-3">
         <flux:heading size="lg">Próximamente</flux:heading>
-        <div class="grid gap-4 md:grid-cols-3">
-            <x-panel.modulo icono="book-open" entrega="4" titulo="Productos" descripcion="Menú y precios de tu restaurante." />
+        <div class="grid gap-4 md:grid-cols-2">
             <x-panel.modulo icono="receipt-percent" entrega="5" titulo="Ventas del día" descripcion="Lo que vendió cada vendedor." />
             <x-panel.modulo icono="banknotes" entrega="6" titulo="Gastos" descripcion="Registra los gastos del restaurante." />
         </div>
@@ -70,6 +69,7 @@
         ['titulo' => 'Bienvenido, encargado', 'descripcion' => 'Desde aquí administras tu restaurante y a sus vendedores. Te muestro cómo.'],
         ['elemento' => '[data-tour=restaurante]', 'titulo' => 'Tu restaurante', 'descripcion' => 'Los datos del local que tienes a tu cargo. Si algo está mal, pídele al dueño que lo corrija.'],
         ['elemento' => '[data-tour=vendedores]', 'titulo' => 'Tus vendedores', 'descripcion' => 'Las personas que registran ventas en tu restaurante. Con «Administrar» ves la lista completa.', 'lado' => 'top'],
+        ['elemento' => '[data-tour=menu-menu]', 'titulo' => 'El menú', 'descripcion' => 'En «Menú» ves los productos de tu restaurante y marcas los que se agotaron.', 'lado' => 'right'],
         ['elemento' => '[data-tour=nuevo-vendedor]', 'titulo' => 'Agrega un vendedor', 'descripcion' => 'Crea su cuenta con nombre, correo y contraseña. Quedará asignado a tu restaurante automáticamente.', 'lado' => 'left'],
     ]" />
 </div>
