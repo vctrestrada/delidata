@@ -1,18 +1,18 @@
 @php
-    $actual = $restaurante->licenciaActual();
-    $programada = $restaurante->licenciaProgramada();
-    $estado = $restaurante->estadoLicencia();
+    $actual = $negocio->licenciaActual();
+    $programada = $negocio->licenciaProgramada();
+    $estado = $negocio->estadoLicencia();
 @endphp
 
 <div class="flex flex-col gap-6">
     <x-panel.encabezado
-        :titulo="$restaurante->nombre"
-        :descripcion="'Registrado el '.$restaurante->created_at->translatedFormat('d \d\e F \d\e Y')"
-        :regresar="route('admin.restaurantes.index')"
+        :titulo="$negocio->nombre"
+        :descripcion="'Registrado el '.$negocio->created_at->translatedFormat('d \d\e F \d\e Y')"
+        :regresar="route('admin.suscripciones.index')"
     >
         <x-slot:acciones>
             <x-recorrido.boton />
-            <flux:button icon="pencil-square" :href="route('admin.restaurantes.editar', $restaurante)" wire:navigate data-tour="editar">
+            <flux:button icon="pencil-square" :href="route('admin.suscripciones.editar', $negocio)" wire:navigate data-tour="editar">
                 Editar datos
             </flux:button>
             <flux:button variant="primary" icon="arrow-path" wire:click="abrirRenovacion" data-tour="renovar">
@@ -21,8 +21,8 @@
         </x-slot:acciones>
     </x-panel.encabezado>
 
-    @unless ($restaurante->activo)
-        <flux:callout icon="no-symbol" color="zinc" heading="Restaurante desactivado">
+    @unless ($negocio->activo)
+        <flux:callout icon="no-symbol" color="zinc" heading="Negocio desactivado">
             <flux:callout.text>Su personal no puede entrar a Delidata aunque la licencia esté vigente.</flux:callout.text>
         </flux:callout>
     @endunless
@@ -48,8 +48,8 @@
                             </div>
                         </div>
                         <div>
-                            <div class="text-xs uppercase tracking-wide text-zinc-500">Sucursales permitidas</div>
-                            <div class="mt-1 text-sm font-medium text-zinc-900">{{ $actual->max_sucursales }}</div>
+                            <div class="text-xs uppercase tracking-wide text-zinc-500">Restaurantes permitidos</div>
+                            <div class="mt-1 text-sm font-medium text-zinc-900">{{ $actual->max_negocios }}</div>
                         </div>
                         <div>
                             <div class="text-xs uppercase tracking-wide text-zinc-500">Precio del periodo</div>
@@ -70,7 +70,7 @@
                     <div class="mt-6 flex flex-wrap gap-2 border-t border-zinc-100 pt-4" data-tour="acciones-licencia">
                         @if ($actual->estado === \App\Enums\EstadoLicencia::Activa)
                             <flux:button size="sm" icon="pause-circle" wire:click="suspender({{ $actual->id }})"
-                                wire:confirm="¿Suspender la licencia? El personal de {{ $restaurante->nombre }} no podrá entrar hasta que la reactives.">
+                                wire:confirm="¿Suspender la licencia? El personal de {{ $negocio->nombre }} no podrá entrar hasta que la reactives.">
                                 Suspender
                             </flux:button>
                         @elseif ($actual->estado === \App\Enums\EstadoLicencia::Suspendida)
@@ -87,7 +87,7 @@
                         @endif
                     </div>
                 @else
-                    <flux:text class="mt-4">Este restaurante no tiene una licencia en curso. Usa «Renovar licencia» para asignarle una.</flux:text>
+                    <flux:text class="mt-4">Este negocio no tiene una licencia en curso. Usa «Renovar licencia» para asignarle una.</flux:text>
                 @endif
 
                 @if ($programada)
@@ -152,7 +152,7 @@
                         <flux:table.column>Notas</flux:table.column>
                     </flux:table.columns>
                     <flux:table.rows>
-                        @forelse ($restaurante->licencias as $licencia)
+                        @forelse ($negocio->licencias as $licencia)
                             <flux:table.row :key="'licencia-'.$licencia->id">
                                 <flux:table.cell class="font-medium text-zinc-900">{{ $licencia->plan->etiqueta() }}</flux:table.cell>
                                 <flux:table.cell>{{ $licencia->fecha_inicio->translatedFormat('d M Y') }} – {{ $licencia->fecha_fin->translatedFormat('d M Y') }}</flux:table.cell>
@@ -174,12 +174,12 @@
         <div class="space-y-6">
             <section class="rounded-xl border border-zinc-200 bg-white p-6" data-tour="dueno">
                 <flux:text class="text-sm">Dueño</flux:text>
-                @if ($restaurante->dueno)
+                @if ($negocio->dueno)
                     <div class="mt-3 flex items-center gap-3">
-                        <flux:avatar :name="$restaurante->dueno->name" :initials="$restaurante->dueno->initials()" color="orange" />
+                        <flux:avatar :name="$negocio->dueno->name" :initials="$negocio->dueno->initials()" color="orange" />
                         <div class="min-w-0">
-                            <div class="truncate font-medium text-zinc-900">{{ $restaurante->dueno->name }}</div>
-                            <div class="truncate text-sm text-zinc-500">{{ $restaurante->dueno->email }}</div>
+                            <div class="truncate font-medium text-zinc-900">{{ $negocio->dueno->name }}</div>
+                            <div class="truncate text-sm text-zinc-500">{{ $negocio->dueno->email }}</div>
                         </div>
                     </div>
                 @else
@@ -187,40 +187,40 @@
                 @endif
 
                 <div class="mt-5 flex items-center justify-between border-t border-zinc-100 pt-4 text-sm">
-                    <span class="text-zinc-500">Usuarios del restaurante</span>
-                    <span class="font-medium text-zinc-900">{{ $restaurante->usuarios_count }}</span>
+                    <span class="text-zinc-500">Usuarios del negocio</span>
+                    <span class="font-medium text-zinc-900">{{ $negocio->usuarios_count }}</span>
                 </div>
             </section>
 
             <section class="space-y-3 rounded-xl border border-zinc-200 bg-white p-6 text-sm">
                 <flux:text class="text-sm">Datos fiscales y contacto</flux:text>
                 <dl class="space-y-2">
-                    <div class="flex justify-between gap-4"><dt class="text-zinc-500">RFC</dt><dd class="text-zinc-900">{{ $restaurante->rfc ?? '—' }}</dd></div>
-                    <div class="flex justify-between gap-4"><dt class="text-zinc-500">Teléfono</dt><dd class="text-zinc-900">{{ $restaurante->telefono ?? '—' }}</dd></div>
-                    <div class="flex justify-between gap-4"><dt class="text-zinc-500">Correo</dt><dd class="truncate text-zinc-900">{{ $restaurante->correo ?? '—' }}</dd></div>
-                    <div class="flex justify-between gap-4"><dt class="text-zinc-500">Dirección</dt><dd class="text-right text-zinc-900">{{ $restaurante->direccion ?? '—' }}</dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-zinc-500">RFC</dt><dd class="text-zinc-900">{{ $negocio->rfc ?? '—' }}</dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-zinc-500">Teléfono</dt><dd class="text-zinc-900">{{ $negocio->telefono ?? '—' }}</dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-zinc-500">Correo</dt><dd class="truncate text-zinc-900">{{ $negocio->correo ?? '—' }}</dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-zinc-500">Dirección</dt><dd class="text-right text-zinc-900">{{ $negocio->direccion ?? '—' }}</dd></div>
                 </dl>
             </section>
 
             <section class="rounded-xl border border-zinc-200 bg-white p-6" data-tour="activo">
                 <flux:switch
-                    :checked="$restaurante->activo"
+                    :checked="$negocio->activo"
                     wire:click="alternarActivo"
-                    wire:confirm="{{ $restaurante->activo ? '¿Desactivar el restaurante? Su personal ya no podrá entrar.' : '¿Activar el restaurante?' }}"
-                    label="Restaurante activo"
+                    wire:confirm="{{ $negocio->activo ? '¿Desactivar el negocio? Su personal ya no podrá entrar.' : '¿Activar el negocio?' }}"
+                    label="Negocio activo"
                     description="Apágalo para bloquear la entrada de todo su personal sin borrar sus datos."
                 />
             </section>
         </div>
     </div>
 
-    <x-recorrido clave="admin.restaurantes.detalle" :pasos="[
-        ['titulo' => 'Detalle del restaurante', 'descripcion' => 'Aquí ves todo sobre un restaurante y administras su licencia. Te explico cada parte.'],
-        ['elemento' => '[data-tour=licencia-actual]', 'titulo' => 'Licencia actual', 'descripcion' => 'Plan contratado, fechas, sucursales permitidas y una barra con el avance del periodo. La etiqueta de la derecha indica si está activa, por vencer, vencida o suspendida.'],
+    <x-recorrido clave="admin.suscripciones.detalle" :pasos="[
+        ['titulo' => 'Detalle del negocio', 'descripcion' => 'Aquí ves todo sobre un negocio y administras su licencia. Te explico cada parte.'],
+        ['elemento' => '[data-tour=licencia-actual]', 'titulo' => 'Licencia actual', 'descripcion' => 'Plan contratado, fechas, restaurantes permitidos y una barra con el avance del periodo. La etiqueta de la derecha indica si está activa, por vencer, vencida o suspendida.'],
         ['elemento' => '[data-tour=acciones-licencia]', 'titulo' => 'Suspender o cancelar', 'descripcion' => '«Suspender» bloquea temporalmente el acceso (por ejemplo, por falta de pago) y luego puedes reactivarla. «Cancelar» la da por terminada de forma definitiva.', 'lado' => 'top'],
-        ['elemento' => '[data-tour=renovar]', 'titulo' => 'Renovar', 'descripcion' => 'Abre el formulario de renovación. Si la licencia sigue vigente, la nueva empieza justo al día siguiente de que termine la actual, así el restaurante no pierde días.', 'lado' => 'left'],
-        ['elemento' => '[data-tour=historial]', 'titulo' => 'Historial', 'descripcion' => 'Todas las licencias que ha tenido el restaurante, con precio y notas. Útil para revisar pagos anteriores.', 'lado' => 'top'],
-        ['elemento' => '[data-tour=dueno]', 'titulo' => 'Dueño y usuarios', 'descripcion' => 'La cuenta del dueño y cuántos usuarios tiene el restaurante. Para cambiar sus datos o contraseña usa «Editar datos».', 'lado' => 'left'],
-        ['elemento' => '[data-tour=activo]', 'titulo' => 'Activar o desactivar', 'descripcion' => 'Interruptor general: si lo apagas, nadie del restaurante puede entrar, aunque la licencia esté vigente.', 'lado' => 'left'],
+        ['elemento' => '[data-tour=renovar]', 'titulo' => 'Renovar', 'descripcion' => 'Abre el formulario de renovación. Si la licencia sigue vigente, la nueva empieza justo al día siguiente de que termine la actual, así el negocio no pierde días.', 'lado' => 'left'],
+        ['elemento' => '[data-tour=historial]', 'titulo' => 'Historial', 'descripcion' => 'Todas las licencias que ha tenido el negocio, con precio y notas. Útil para revisar pagos anteriores.', 'lado' => 'top'],
+        ['elemento' => '[data-tour=dueno]', 'titulo' => 'Dueño y usuarios', 'descripcion' => 'La cuenta del dueño y cuántos usuarios tiene el negocio. Para cambiar sus datos o contraseña usa «Editar datos».', 'lado' => 'left'],
+        ['elemento' => '[data-tour=activo]', 'titulo' => 'Activar o desactivar', 'descripcion' => 'Interruptor general: si lo apagas, nadie del negocio puede entrar, aunque la licencia esté vigente.', 'lado' => 'left'],
     ]" />
 </div>

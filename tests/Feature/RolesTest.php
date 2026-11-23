@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\EstadoLicencia;
 use App\Enums\PlanLicencia;
 use App\Enums\Rol;
+use App\Models\Negocio;
 use App\Models\Restaurante;
 use App\Models\User;
 use Database\Seeders\RolesYPermisosSeeder;
@@ -29,27 +30,33 @@ class RolesTest extends TestCase
         return [
             'super admin' => [Rol::SuperAdmin, '/admin'],
             'dueño' => [Rol::Dueno, '/negocio'],
-            'encargado' => [Rol::Encargado, '/sucursal'],
+            'encargado' => [Rol::Encargado, '/mi-restaurante'],
             'vendedor' => [Rol::Vendedor, '/ventas'],
         ];
     }
 
-    /** Usuario con rol; si no es super admin, se liga a un restaurante con licencia vigente. */
+    /** Usuario con rol; si no es super admin, se liga a un negocio con suscripción vigente (y a un restaurante si aplica). */
     private function usuarioCon(Rol $rol): User
     {
         $usuario = User::factory()->create()->assignRole($rol->value);
 
         if ($rol !== Rol::SuperAdmin) {
-            $restaurante = Restaurante::create(['nombre' => 'Restaurante de prueba']);
-            $restaurante->licencias()->create([
+            $negocio = Negocio::create(['nombre' => 'Negocio de prueba']);
+            $negocio->licencias()->create([
                 'plan' => PlanLicencia::Basico,
-                'max_sucursales' => 1,
+                'max_restaurantes' => 1,
                 'precio' => 499,
                 'fecha_inicio' => today()->subDay(),
                 'fecha_fin' => today()->addMonth(),
                 'estado' => EstadoLicencia::Activa,
             ]);
-            $usuario->restaurante()->associate($restaurante)->save();
+            $usuario->negocio()->associate($negocio);
+
+            if ($rol->trabajaEnRestaurante()) {
+                $usuario->restaurante()->associate(Restaurante::create(['negocio_id' => $negocio->id, 'nombre' => 'Centro']));
+            }
+
+            $usuario->save();
         }
 
         return $usuario;

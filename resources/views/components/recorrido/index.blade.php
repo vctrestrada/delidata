@@ -2,7 +2,7 @@
     Recorrido guiado de una pantalla (Driver.js).
 
     Uso:
-    <x-recorrido clave="admin.restaurantes" :pasos="[
+    <x-recorrido clave="admin.suscripciones" :pasos="[
         ['elemento' => '[data-tour=buscar]', 'titulo' => 'Buscar', 'descripcion' => '...'],
         ['titulo' => 'Paso sin elemento', 'descripcion' => 'Se muestra al centro de la pantalla'],
     ]" />

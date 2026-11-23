@@ -10,9 +10,9 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property int $restaurante_id
+ * @property int $negocio_id
  * @property PlanLicencia $plan
- * @property int $max_sucursales
+ * @property int $max_restaurantes
  * @property string $precio
  * @property Carbon $fecha_inicio
  * @property Carbon $fecha_fin
@@ -24,7 +24,7 @@ class Licencia extends Model
     protected $table = 'licencias';
 
     protected $fillable = [
-        'restaurante_id', 'plan', 'max_sucursales', 'precio',
+        'negocio_id', 'plan', 'max_restaurantes', 'precio',
         'fecha_inicio', 'fecha_fin', 'estado', 'notas',
     ];
 
@@ -39,9 +39,9 @@ class Licencia extends Model
         ];
     }
 
-    public function restaurante(): BelongsTo
+    public function negocio(): BelongsTo
     {
-        return $this->belongsTo(Restaurante::class);
+        return $this->belongsTo(Negocio::class);
     }
 
     /**

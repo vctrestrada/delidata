@@ -5,23 +5,24 @@ namespace Database\Seeders;
 use App\Enums\EstadoLicencia;
 use App\Enums\PlanLicencia;
 use App\Enums\Rol;
+use App\Models\Negocio;
 use App\Models\Restaurante;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * Restaurantes de ejemplo con licencias en distintos estados,
- * para ver el panel del super admin con datos reales.
+ * Negocios de ejemplo con suscripciones en distintos estados.
  *
- * El dueño, encargado y vendedor demo quedan en "La Esquina Taquería".
+ * "La Esquina Taquería" (del dueño demo) tiene 2 restaurantes,
+ * con el encargado y el vendedor demo en "La Esquina — Centro".
  */
-class RestaurantesDemoSeeder extends Seeder
+class NegociosDemoSeeder extends Seeder
 {
     public function run(): void
     {
         $hoy = today();
 
-        $restaurantes = [
+        $negocios = [
             [
                 'nombre' => 'La Esquina Taquería', 'rfc' => 'ETA240115KX3', 'telefono' => '55 2301 8890',
                 'correo' => 'contacto@laesquina.mx', 'direccion' => 'Av. Pantitlán 120, Nezahualcóyotl, Edo. Méx.',
@@ -48,7 +49,7 @@ class RestaurantesDemoSeeder extends Seeder
             ],
         ];
 
-        foreach ($restaurantes as $datos) {
+        foreach ($negocios as $datos) {
             $dueno = is_string($datos['dueno'])
                 ? User::where('email', $datos['dueno'])->firstOrFail()
                 : (User::where('email', $datos['dueno'][1])->first()
@@ -56,7 +57,7 @@ class RestaurantesDemoSeeder extends Seeder
 
             $dueno->syncRoles([Rol::Dueno->value]);
 
-            $restaurante = Restaurante::updateOrCreate(
+            $negocio = Negocio::updateOrCreate(
                 ['nombre' => $datos['nombre']],
                 [
                     'rfc' => $datos['rfc'], 'telefono' => $datos['telefono'], 'correo' => $datos['correo'],
@@ -64,12 +65,12 @@ class RestaurantesDemoSeeder extends Seeder
                 ],
             );
 
-            $dueno->restaurante()->associate($restaurante)->save();
+            $dueno->negocio()->associate($negocio)->save();
 
-            if ($restaurante->licencias()->doesntExist()) {
-                $restaurante->licencias()->create([
+            if ($negocio->licencias()->doesntExist()) {
+                $negocio->licencias()->create([
                     'plan' => $datos['plan'],
-                    'max_sucursales' => $datos['plan']->maxSucursales(),
+                    'max_restaurantes' => $datos['plan']->maxRestaurantes(),
                     'precio' => $datos['plan']->precioMensual() * $datos['meses'],
                     'fecha_inicio' => $datos['inicio'],
                     'fecha_fin' => $datos['inicio']->addMonthsNoOverflow($datos['meses'])->subDay(),
@@ -79,10 +80,38 @@ class RestaurantesDemoSeeder extends Seeder
             }
         }
 
-        // El personal demo trabaja en La Esquina Taquería.
-        $laEsquina = Restaurante::where('nombre', 'La Esquina Taquería')->first();
+        $this->restaurantesDeLaEsquina();
+    }
 
-        User::whereIn('email', ['encargado@delidata.test', 'vendedor@delidata.test'])
-            ->update(['restaurante_id' => $laEsquina->id]);
+    /** Restaurantes y personal del negocio demo. */
+    private function restaurantesDeLaEsquina(): void
+    {
+        $negocio = Negocio::where('nombre', 'La Esquina Taquería')->firstOrFail();
+
+        $centro = Restaurante::updateOrCreate(
+            ['negocio_id' => $negocio->id, 'nombre' => 'La Esquina — Centro'],
+            ['direccion' => 'Av. Pantitlán 120, Col. Centro', 'telefono' => '55 2301 8890', 'abre' => '08:00', 'cierra' => '23:00'],
+        );
+
+        $plaza = Restaurante::updateOrCreate(
+            ['negocio_id' => $negocio->id, 'nombre' => 'La Esquina — Plaza Neza'],
+            ['direccion' => 'Plaza Ciudad Jardín, local 14', 'telefono' => '55 2301 8891', 'abre' => '11:00', 'cierra' => '21:00'],
+        );
+
+        $personal = [
+            ['encargado@delidata.test', 'Encargado Demo', Rol::Encargado, $centro],
+            ['vendedor@delidata.test', 'Vendedor Demo', Rol::Vendedor, $centro],
+            ['sofia@laesquina.test', 'Sofía Martínez', Rol::Vendedor, $centro],
+            ['jorge@laesquina.test', 'Jorge Castillo', Rol::Encargado, $plaza],
+            ['ana@laesquina.test', 'Ana Gutiérrez', Rol::Vendedor, $plaza],
+        ];
+
+        foreach ($personal as [$correo, $nombre, $rol, $restaurante]) {
+            $usuario = User::where('email', $correo)->first()
+                ?? User::factory()->create(['name' => $nombre, 'email' => $correo, 'password' => 'password']);
+
+            $usuario->forceFill(['negocio_id' => $negocio->id, 'restaurante_id' => $restaurante->id])->save();
+            $usuario->syncRoles([$rol->value]);
+        }
     }
 }

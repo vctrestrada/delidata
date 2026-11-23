@@ -5,6 +5,12 @@ namespace App\Enums;
 /**
  * Roles del sistema Delidata.
  *
+ * Jerarquía:
+ *  - Super admin: administra las suscripciones de los negocios (nada más).
+ *  - Dueño: administrador de su negocio; registra sus restaurantes y a su personal.
+ *  - Encargado: responsable de un restaurante; administra a sus vendedores.
+ *  - Vendedor: registra ventas en su restaurante.
+ *
  * El orden de los casos define la jerarquía: si un usuario tuviera
  * más de un rol, se toma como principal el primero que aparezca aquí.
  */
@@ -21,7 +27,7 @@ enum Rol: string
         return match ($this) {
             self::SuperAdmin => 'Super administrador',
             self::Dueno => 'Dueño',
-            self::Encargado => 'Encargado de sucursal',
+            self::Encargado => 'Encargado',
             self::Vendedor => 'Vendedor',
         };
     }
@@ -32,15 +38,15 @@ enum Rol: string
         return match ($this) {
             self::SuperAdmin => 'admin.inicio',
             self::Dueno => 'negocio.inicio',
-            self::Encargado => 'sucursal.inicio',
+            self::Encargado => 'encargado.inicio',
             self::Vendedor => 'ventas.inicio',
         };
     }
 
-    /** Patrón de nombres de ruta del panel de este rol (para el menú). */
-    public function patronRutas(): string
+    /** ¿Trabaja dentro de un restaurante específico? */
+    public function trabajaEnRestaurante(): bool
     {
-        return explode('.', $this->rutaInicio())[0].'.*';
+        return in_array($this, [self::Encargado, self::Vendedor], true);
     }
 
     /**
@@ -52,19 +58,18 @@ enum Rol: string
     {
         return match ($this) {
             self::SuperAdmin => [
-                'licencias.gestionar',
-                'restaurantes.gestionar',
-                'usuarios.gestionar',
+                'suscripciones.gestionar',
             ],
             self::Dueno => [
-                'sucursales.gestionar',
-                'usuarios.gestionar',
+                'restaurantes.gestionar',
+                'personal.gestionar',
                 'productos.gestionar',
                 'ventas.ver',
                 'gastos.registrar',
                 'reportes.ver',
             ],
             self::Encargado => [
+                'personal.gestionar',
                 'productos.gestionar',
                 'ventas.ver',
                 'gastos.registrar',
@@ -73,6 +78,21 @@ enum Rol: string
             self::Vendedor => [
                 'ventas.registrar',
             ],
+        };
+    }
+
+    /**
+     * Roles que puede dar de alta cada rol.
+     *
+     * @return list<self>
+     */
+    public function puedeCrear(): array
+    {
+        return match ($this) {
+            self::SuperAdmin => [self::Dueno],
+            self::Dueno => [self::Encargado, self::Vendedor],
+            self::Encargado => [self::Vendedor],
+            self::Vendedor => [],
         };
     }
 

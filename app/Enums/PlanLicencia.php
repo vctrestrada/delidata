@@ -3,7 +3,7 @@
 namespace App\Enums;
 
 /**
- * Planes de licencia que el super admin puede vender a un restaurante.
+ * Planes de suscripción que el super admin vende a cada negocio.
  */
 enum PlanLicencia: string
 {
@@ -20,8 +20,8 @@ enum PlanLicencia: string
         };
     }
 
-    /** Número máximo de sucursales que permite el plan. */
-    public function maxSucursales(): int
+    /** Número máximo de restaurantes que el dueño puede registrar. */
+    public function maxRestaurantes(): int
     {
         return match ($this) {
             self::Basico => 1,
@@ -42,10 +42,10 @@ enum PlanLicencia: string
 
     public function descripcion(): string
     {
-        $sucursales = $this->maxSucursales();
+        $restaurantes = $this->maxRestaurantes();
 
-        return $sucursales === 1
-            ? '1 sucursal · $'.number_format($this->precioMensual()).' al mes'
-            : "Hasta {$sucursales} sucursales · $".number_format($this->precioMensual()).' al mes';
+        return $restaurantes === 1
+            ? '1 restaurante · $'.number_format($this->precioMensual()).' al mes'
+            : "Hasta {$restaurantes} restaurantes · $".number_format($this->precioMensual()).' al mes';
     }
 }

@@ -7,16 +7,22 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Impide que el personal de un restaurante use el sistema cuando
- * el restaurante está desactivado o su licencia no está vigente.
+ * Impide que el personal de un negocio use el sistema cuando:
+ *  - el negocio está desactivado o su suscripción no está vigente, o
+ *  - (encargados y vendedores) su restaurante no existe o está desactivado.
  */
 class VerificarLicencia
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $restaurante = $request->user()?->restaurante()->with('licencias')->first();
+        $usuario = $request->user();
+        $negocio = $usuario?->negocio()->with('licencias')->first();
 
-        if ($restaurante === null || ! $restaurante->puedeOperar()) {
+        if ($negocio === null || ! $negocio->puedeOperar()) {
+            return redirect()->route('licencia.inactiva');
+        }
+
+        if ($usuario->rolPrincipal()?->trabajaEnRestaurante() && ! $usuario->restaurante?->activo) {
             return redirect()->route('licencia.inactiva');
         }
 

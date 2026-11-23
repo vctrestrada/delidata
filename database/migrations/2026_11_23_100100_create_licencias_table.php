@@ -4,15 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Licencias (periodos de suscripción) de cada negocio.
+ */
 return new class extends Migration
 {
     public function up(): void
     {
         Schema::create('licencias', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('restaurante_id')->constrained('restaurantes')->cascadeOnDelete();
+            $table->foreignId('negocio_id')->constrained('negocios')->cascadeOnDelete();
             $table->string('plan', 20);
-            $table->unsignedSmallInteger('max_sucursales');
+            $table->unsignedSmallInteger('max_restaurantes');
             $table->decimal('precio', 10, 2);
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
@@ -21,7 +24,7 @@ return new class extends Migration
             $table->text('notas')->nullable();
             $table->timestamps();
 
-            $table->index(['restaurante_id', 'fecha_inicio', 'fecha_fin']);
+            $table->index(['negocio_id', 'fecha_inicio', 'fecha_fin']);
         });
     }
 

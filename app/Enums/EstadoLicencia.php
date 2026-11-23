@@ -47,7 +47,7 @@ enum EstadoLicencia: string
         };
     }
 
-    /** ¿Permite que el restaurante use el sistema? */
+    /** ¿Permite que el negocio use el sistema? */
     public function permiteAcceso(): bool
     {
         return in_array($this, [self::Activa, self::PorVencer], true);

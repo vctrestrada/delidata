@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Enums\EstadoLicencia;
-use App\Models\Restaurante;
+use App\Models\Negocio;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -12,25 +12,25 @@ use Livewire\Component;
 #[Title('Administración')]
 class Inicio extends Component
 {
-    /** @return Collection<int, Restaurante> */
+    /** @return Collection<int, Negocio> */
     #[Computed]
-    public function restaurantes(): Collection
+    public function negocios(): Collection
     {
-        return Restaurante::with(['dueno', 'licencias'])->orderBy('nombre')->get();
+        return Negocio::with(['dueno', 'licencias'])->orderBy('nombre')->get();
     }
 
     /** @return array<string, int|float> */
     #[Computed]
     public function resumen(): array
     {
-        $estados = $this->restaurantes->map(fn (Restaurante $r) => $r->estadoLicencia());
+        $estados = $this->negocios->map(fn (Negocio $n) => $n->estadoLicencia());
 
-        $ingresoVigente = $this->restaurantes
-            ->filter(fn (Restaurante $r) => $r->estadoLicencia()->permiteAcceso())
-            ->sum(fn (Restaurante $r) => (float) $r->licenciaActual()?->precio);
+        $ingresoVigente = $this->negocios
+            ->filter(fn (Negocio $n) => $n->estadoLicencia()->permiteAcceso())
+            ->sum(fn (Negocio $n) => (float) $n->licenciaActual()?->precio);
 
         return [
-            'total' => $this->restaurantes->count(),
+            'total' => $this->negocios->count(),
             'vigentes' => $estados->filter(fn (EstadoLicencia $e) => $e->permiteAcceso())->count(),
             'porVencer' => $estados->filter(fn (EstadoLicencia $e) => $e === EstadoLicencia::PorVencer)->count(),
             'sinAcceso' => $estados->reject(fn (EstadoLicencia $e) => $e->permiteAcceso())->count(),
@@ -41,16 +41,16 @@ class Inicio extends Component
     /**
      * Restaurantes que requieren atención: por vencer o sin acceso.
      *
-     * @return Collection<int, Restaurante>
+     * @return Collection<int, Negocio>
      */
     #[Computed]
     public function atencion(): Collection
     {
-        return $this->restaurantes
-            ->filter(fn (Restaurante $r) => in_array($r->estadoLicencia(), [
+        return $this->negocios
+            ->filter(fn (Negocio $n) => in_array($n->estadoLicencia(), [
                 EstadoLicencia::PorVencer, EstadoLicencia::Vencida, EstadoLicencia::Suspendida, EstadoLicencia::SinLicencia,
             ], true))
-            ->sortBy(fn (Restaurante $r) => $r->licenciaActual()?->fecha_fin?->timestamp ?? 0)
+            ->sortBy(fn (Negocio $n) => $n->licenciaActual()?->fecha_fin?->timestamp ?? 0)
             ->take(6);
     }
 }

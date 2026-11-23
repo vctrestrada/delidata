@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Admin\Restaurantes;
+namespace App\Livewire\Admin\Suscripciones;
 
 use App\Enums\EstadoLicencia;
-use App\Models\Restaurante;
+use App\Models\Negocio;
 use Flux\Flux;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
@@ -12,7 +12,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Title('Restaurantes')]
+#[Title('Suscripciones')]
 class Index extends Component
 {
     use WithPagination;
@@ -46,16 +46,16 @@ class Index extends Component
      * se aplica en PHP y la paginación se arma a mano.
      */
     #[Computed]
-    public function restaurantes(): LengthAwarePaginator
+    public function negocios(): LengthAwarePaginator
     {
         $filtro = EstadoLicencia::tryFrom($this->estado);
 
-        $todos = Restaurante::query()
+        $todos = Negocio::query()
             ->with(['dueno', 'licencias'])
             ->buscar($this->buscar)
             ->orderBy('nombre')
             ->get()
-            ->when($filtro, fn ($c) => $c->filter(fn (Restaurante $r) => $r->estadoLicencia() === $filtro))
+            ->when($filtro, fn ($c) => $c->filter(fn (Negocio $n) => $n->estadoLicencia() === $filtro))
             ->values();
 
         $pagina = $this->getPage();
@@ -65,22 +65,22 @@ class Index extends Component
             $todos->count(),
             self::POR_PAGINA,
             $pagina,
-            ['path' => route('admin.restaurantes.index')],
+            ['path' => route('admin.suscripciones.index')],
         );
     }
 
     public function alternarActivo(int $id): void
     {
-        $restaurante = Restaurante::findOrFail($id);
-        $restaurante->update(['activo' => ! $restaurante->activo]);
+        $negocio = Negocio::findOrFail($id);
+        $negocio->update(['activo' => ! $negocio->activo]);
 
-        unset($this->restaurantes);
+        unset($this->negocios);
 
         Flux::toast(
             variant: 'success',
-            text: $restaurante->activo
-                ? "{$restaurante->nombre} se activó."
-                : "{$restaurante->nombre} se desactivó. Su personal ya no podrá entrar.",
+            text: $negocio->activo
+                ? "{$negocio->nombre} se activó."
+                : "{$negocio->nombre} se desactivó. Su dueño y su personal ya no podrán entrar.",
         );
     }
 }

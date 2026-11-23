@@ -8,29 +8,43 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * Pantalla que ve el personal cuando su restaurante no puede operar.
+ * Pantalla que ve el personal cuando no puede operar
+ * (suscripción vencida, negocio desactivado o restaurante desactivado).
  */
 class LicenciaInactivaController extends Controller
 {
     public function __invoke(Request $request): View|RedirectResponse
     {
         $usuario = $request->user();
+        $rol = $usuario->rolPrincipal();
 
-        // El super admin no depende de ninguna licencia.
-        if ($usuario->hasRole(Rol::SuperAdmin->value)) {
+        // El super admin no depende de ninguna suscripción.
+        if ($rol === Rol::SuperAdmin) {
             return redirect()->route('dashboard');
         }
 
-        $restaurante = $usuario->restaurante()->with('licencias')->first();
+        $negocio = $usuario->negocio()->with('licencias')->first();
+        $restaurante = $usuario->restaurante;
 
-        if ($restaurante?->puedeOperar()) {
+        $motivo = match (true) {
+            $negocio === null => 'sin-negocio',
+            ! $negocio->activo => 'negocio-inactivo',
+            ! $negocio->estadoLicencia()->permiteAcceso() => 'suscripcion',
+            $rol?->trabajaEnRestaurante() && $restaurante === null => 'sin-restaurante',
+            $rol?->trabajaEnRestaurante() && ! $restaurante->activo => 'restaurante-inactivo',
+            default => null,
+        };
+
+        if ($motivo === null) {
             return redirect()->route('dashboard');
         }
 
         return view('panel.licencia-inactiva', [
+            'motivo' => $motivo,
+            'negocio' => $negocio,
             'restaurante' => $restaurante,
-            'estado' => $restaurante?->estadoLicencia(),
-            'esDueno' => $usuario->hasRole(Rol::Dueno->value),
+            'estado' => $negocio?->estadoLicencia(),
+            'esDueno' => $rol === Rol::Dueno,
         ]);
     }
 }

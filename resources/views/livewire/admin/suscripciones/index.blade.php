@@ -1,12 +1,12 @@
 <div class="flex flex-col gap-6">
     <x-panel.encabezado
-        titulo="Restaurantes"
-        descripcion="Todos los restaurantes que usan Delidata, con su dueño y el estado de su licencia."
+        titulo="Suscripciones"
+        descripcion="Todos los negocios que usan Delidata, con su dueño y el estado de su licencia."
     >
         <x-slot:acciones>
             <x-recorrido.boton />
-            <flux:button variant="primary" icon="plus" :href="route('admin.restaurantes.crear')" wire:navigate data-tour="nuevo">
-                Nuevo restaurante
+            <flux:button variant="primary" icon="plus" :href="route('admin.suscripciones.crear')" wire:navigate data-tour="nuevo">
+                Nueva suscripción
             </flux:button>
         </x-slot:acciones>
     </x-panel.encabezado>
@@ -17,7 +17,7 @@
             <flux:input
                 wire:model.live.debounce.400ms="buscar"
                 icon="magnifying-glass"
-                placeholder="Buscar por restaurante, RFC, dueño o correo…"
+                placeholder="Buscar por negocio, RFC, dueño o correo…"
                 clearable
             />
         </div>
@@ -38,9 +38,9 @@
 
     {{-- Tabla --}}
     <div class="rounded-xl border border-zinc-200 bg-white px-5" data-tour="tabla">
-        <flux:table :paginate="$this->restaurantes">
+        <flux:table :paginate="$this->negocios">
             <flux:table.columns>
-                <flux:table.column>Restaurante</flux:table.column>
+                <flux:table.column>Negocio</flux:table.column>
                 <flux:table.column>Dueño</flux:table.column>
                 <flux:table.column>Plan</flux:table.column>
                 <flux:table.column>Vigencia</flux:table.column>
@@ -50,19 +50,19 @@
             </flux:table.columns>
 
             <flux:table.rows>
-                @forelse ($this->restaurantes as $restaurante)
-                    @php($licencia = $restaurante->licenciaActual())
-                    <flux:table.row :key="$restaurante->id">
+                @forelse ($this->negocios as $negocio)
+                    @php($licencia = $negocio->licenciaActual())
+                    <flux:table.row :key="$negocio->id">
                         <flux:table.cell>
-                            <a href="{{ route('admin.restaurantes.detalle', $restaurante) }}" wire:navigate class="group">
-                                <div class="font-medium text-zinc-900 group-hover:text-orange-600">{{ $restaurante->nombre }}</div>
-                                <div class="text-xs text-zinc-500">{{ $restaurante->rfc ?? 'Sin RFC' }}</div>
+                            <a href="{{ route('admin.suscripciones.detalle', $negocio) }}" wire:navigate class="group">
+                                <div class="font-medium text-zinc-900 group-hover:text-orange-600">{{ $negocio->nombre }}</div>
+                                <div class="text-xs text-zinc-500">{{ $negocio->rfc ?? 'Sin RFC' }}</div>
                             </a>
                         </flux:table.cell>
 
                         <flux:table.cell>
-                            <div class="text-zinc-800">{{ $restaurante->dueno?->name ?? '—' }}</div>
-                            <div class="text-xs text-zinc-500">{{ $restaurante->dueno?->email }}</div>
+                            <div class="text-zinc-800">{{ $negocio->dueno?->name ?? '—' }}</div>
+                            <div class="text-xs text-zinc-500">{{ $negocio->dueno?->email }}</div>
                         </flux:table.cell>
 
                         <flux:table.cell>{{ $licencia?->plan->etiqueta() ?? '—' }}</flux:table.cell>
@@ -79,15 +79,15 @@
                         </flux:table.cell>
 
                         <flux:table.cell>
-                            <x-panel.estado-licencia :estado="$restaurante->estadoLicencia()" />
+                            <x-panel.estado-licencia :estado="$negocio->estadoLicencia()" />
                         </flux:table.cell>
 
                         <flux:table.cell>
                             <flux:switch
-                                :checked="$restaurante->activo"
-                                wire:click="alternarActivo({{ $restaurante->id }})"
-                                wire:confirm="{{ $restaurante->activo ? '¿Desactivar '.$restaurante->nombre.'? Su personal ya no podrá entrar al sistema.' : '¿Activar '.$restaurante->nombre.'?' }}"
-                                aria-label="Activar o desactivar {{ $restaurante->nombre }}"
+                                :checked="$negocio->activo"
+                                wire:click="alternarActivo({{ $negocio->id }})"
+                                wire:confirm="{{ $negocio->activo ? '¿Desactivar '.$negocio->nombre.'? Su personal ya no podrá entrar al sistema.' : '¿Activar '.$negocio->nombre.'?' }}"
+                                aria-label="Activar o desactivar {{ $negocio->nombre }}"
                             />
                         </flux:table.cell>
 
@@ -95,10 +95,10 @@
                             <flux:dropdown position="bottom" align="end">
                                 <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" aria-label="Acciones" />
                                 <flux:menu>
-                                    <flux:menu.item icon="eye" :href="route('admin.restaurantes.detalle', $restaurante)" wire:navigate>
+                                    <flux:menu.item icon="eye" :href="route('admin.suscripciones.detalle', $negocio)" wire:navigate>
                                         Ver detalle y licencias
                                     </flux:menu.item>
-                                    <flux:menu.item icon="pencil-square" :href="route('admin.restaurantes.editar', $restaurante)" wire:navigate>
+                                    <flux:menu.item icon="pencil-square" :href="route('admin.suscripciones.editar', $negocio)" wire:navigate>
                                         Editar datos
                                     </flux:menu.item>
                                 </flux:menu>
@@ -111,11 +111,11 @@
                             <div class="flex flex-col items-center gap-2 py-10 text-center">
                                 <flux:icon name="building-storefront" variant="outline" class="size-8 text-orange-500" />
                                 @if ($buscar !== '' || $estado !== '')
-                                    <flux:text>No hay restaurantes con esos filtros.</flux:text>
+                                    <flux:text>No hay negocios con esos filtros.</flux:text>
                                 @else
-                                    <flux:text>Todavía no registras ningún restaurante.</flux:text>
-                                    <flux:button size="sm" variant="primary" icon="plus" :href="route('admin.restaurantes.crear')" wire:navigate>
-                                        Registrar el primero
+                                    <flux:text>Todavía no registras ningún negocio.</flux:text>
+                                    <flux:button size="sm" variant="primary" icon="plus" :href="route('admin.suscripciones.crear')" wire:navigate>
+                                        Registrar la primera
                                     </flux:button>
                                 @endif
                             </div>
@@ -126,11 +126,11 @@
         </flux:table>
     </div>
 
-    <x-recorrido clave="admin.restaurantes" :pasos="[
-        ['titulo' => 'Administración de restaurantes', 'descripcion' => 'En esta pantalla ves y administras todos los restaurantes de la plataforma. Vamos paso a paso.'],
-        ['elemento' => '[data-tour=nuevo]', 'titulo' => '1. Registrar un restaurante', 'descripcion' => 'Empieza aquí. Abre el formulario donde capturas los datos del restaurante, la cuenta de su dueño y su primera licencia.', 'lado' => 'left'],
-        ['elemento' => '[data-tour=filtros]', 'titulo' => '2. Buscar y filtrar', 'descripcion' => 'Escribe el nombre del restaurante, su RFC o el nombre o correo del dueño. Con el selector de la derecha filtras por estado de licencia, por ejemplo «Por vencer».'],
-        ['elemento' => '[data-tour=tabla]', 'titulo' => '3. El listado', 'descripcion' => 'Cada fila muestra el plan, cuándo vence la licencia y su estado. Da clic en el nombre del restaurante para ver su detalle, renovar o suspender su licencia.', 'lado' => 'top'],
-        ['elemento' => '[data-tour=tabla]', 'titulo' => '4. Activar o desactivar', 'descripcion' => 'El interruptor «Activo» bloquea o permite la entrada de todo el personal del restaurante sin borrar sus datos. El menú «···» de cada fila tiene accesos directos para ver o editar.', 'lado' => 'top'],
+    <x-recorrido clave="admin.suscripciones" :pasos="[
+        ['titulo' => 'Administración de suscripciones', 'descripcion' => 'En esta pantalla ves y administras todos los negocios de la plataforma. Vamos paso a paso.'],
+        ['elemento' => '[data-tour=nuevo]', 'titulo' => '1. Registrar un negocio', 'descripcion' => 'Empieza aquí. Abre el formulario donde capturas los datos del negocio, la cuenta de su dueño y su primera licencia.', 'lado' => 'left'],
+        ['elemento' => '[data-tour=filtros]', 'titulo' => '2. Buscar y filtrar', 'descripcion' => 'Escribe el nombre del negocio, su RFC o el nombre o correo del dueño. Con el selector de la derecha filtras por estado de licencia, por ejemplo «Por vencer».'],
+        ['elemento' => '[data-tour=tabla]', 'titulo' => '3. El listado', 'descripcion' => 'Cada fila muestra el plan, cuándo vence la licencia y su estado. Da clic en el nombre del negocio para ver su detalle, renovar o suspender su licencia.', 'lado' => 'top'],
+        ['elemento' => '[data-tour=tabla]', 'titulo' => '4. Activar o desactivar', 'descripcion' => 'El interruptor «Activo» bloquea o permite la entrada de todo el personal del negocio sin borrar sus datos. El menú «···» de cada fila tiene accesos directos para ver o editar.', 'lado' => 'top'],
     ]" />
 </div>

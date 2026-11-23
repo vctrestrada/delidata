@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Livewire\Admin\Restaurantes;
+namespace App\Livewire\Admin\Suscripciones;
 
 use App\Enums\EstadoLicencia;
 use App\Enums\PlanLicencia;
 use App\Models\Licencia;
-use App\Models\Restaurante;
+use App\Models\Negocio;
 use Flux\Flux;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 /**
- * Detalle de un restaurante: datos, dueño, licencia actual e historial.
+ * Detalle de una suscripción: datos del negocio, dueño, licencia actual e historial.
  * Desde aquí se renueva, suspende, reactiva o cancela la licencia.
  */
 class Detalle extends Component
 {
-    public Restaurante $restaurante;
+    public Negocio $negocio;
 
     public bool $mostrarRenovacion = false;
 
@@ -30,15 +30,15 @@ class Detalle extends Component
 
     public string $notas = '';
 
-    public function mount(Restaurante $restaurante): void
+    public function mount(Negocio $negocio): void
     {
-        $this->restaurante = $restaurante;
+        $this->negocio = $negocio;
         $this->recargar();
     }
 
     private function recargar(): void
     {
-        $this->restaurante->load(['dueno', 'licencias'])->loadCount('usuarios');
+        $this->negocio->load(['dueno', 'licencias'])->loadCount('usuarios');
     }
 
     /*
@@ -49,7 +49,7 @@ class Detalle extends Component
 
     public function abrirRenovacion(): void
     {
-        $actual = $this->restaurante->licenciaActual();
+        $actual = $this->negocio->licenciaActual();
 
         $this->plan = ($actual?->plan ?? PlanLicencia::Profesional)->value;
         $this->meses = 12;
@@ -86,7 +86,7 @@ class Detalle extends Component
      */
     public function inicioRenovacion(): Carbon
     {
-        $ultima = $this->restaurante->licencias
+        $ultima = $this->negocio->licencias
             ->filter(fn (Licencia $l) => in_array($l->estadoActual(), [
                 EstadoLicencia::Activa, EstadoLicencia::PorVencer, EstadoLicencia::Programada,
             ], true))
@@ -113,9 +113,9 @@ class Detalle extends Component
         $plan = PlanLicencia::from($datos['plan']);
         $inicio = $this->inicioRenovacion();
 
-        $this->restaurante->licencias()->create([
+        $this->negocio->licencias()->create([
             'plan' => $plan,
-            'max_sucursales' => $plan->maxSucursales(),
+            'max_restaurantes' => $plan->maxRestaurantes(),
             'precio' => $datos['precio'],
             'fecha_inicio' => $inicio,
             'fecha_fin' => $this->finRenovacion(),
@@ -143,7 +143,7 @@ class Detalle extends Component
 
     public function suspender(int $licenciaId): void
     {
-        $this->cambiarEstado($licenciaId, EstadoLicencia::Suspendida, 'Licencia suspendida. El personal del restaurante ya no podrá entrar.');
+        $this->cambiarEstado($licenciaId, EstadoLicencia::Suspendida, 'Licencia suspendida. El personal del negocio ya no podrá entrar.');
     }
 
     public function reactivar(int $licenciaId): void
@@ -158,7 +158,7 @@ class Detalle extends Component
 
     private function cambiarEstado(int $licenciaId, EstadoLicencia $estado, string $mensaje): void
     {
-        $this->restaurante->licencias()->whereKey($licenciaId)->firstOrFail()->update(['estado' => $estado]);
+        $this->negocio->licencias()->whereKey($licenciaId)->firstOrFail()->update(['estado' => $estado]);
         $this->recargar();
 
         Flux::toast(variant: 'success', text: $mensaje);
@@ -166,17 +166,17 @@ class Detalle extends Component
 
     public function alternarActivo(): void
     {
-        $this->restaurante->update(['activo' => ! $this->restaurante->activo]);
+        $this->negocio->update(['activo' => ! $this->negocio->activo]);
         $this->recargar();
 
         Flux::toast(
             variant: 'success',
-            text: $this->restaurante->activo ? 'Restaurante activado.' : 'Restaurante desactivado. Su personal ya no podrá entrar.',
+            text: $this->negocio->activo ? 'Negocio activado.' : 'Negocio desactivado. Su personal ya no podrá entrar.',
         );
     }
 
     public function render()
     {
-        return view('livewire.admin.restaurantes.detalle')->title($this->restaurante->nombre);
+        return view('livewire.admin.suscripciones.detalle')->title($this->negocio->nombre);
     }
 }

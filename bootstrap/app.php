@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\UsuarioActivo;
 use App\Http\Middleware\VerificarLicencia;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,9 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
-            // Bloquea al personal si su restaurante no tiene licencia vigente.
+            // Bloquea al personal si su negocio no tiene suscripción vigente.
             'licencia' => VerificarLicencia::class,
         ]);
+
+        // Saca de la sesión a los usuarios desactivados en cualquier pantalla.
+        $middleware->appendToGroup('web', UsuarioActivo::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

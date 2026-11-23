@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Livewire\Admin\Restaurantes;
+namespace App\Livewire\Admin\Suscripciones;
 
 use App\Enums\EstadoLicencia;
 use App\Enums\PlanLicencia;
 use App\Enums\Rol;
-use App\Models\Restaurante;
+use App\Models\Negocio;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Support\Carbon;
@@ -15,16 +15,16 @@ use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
 
 /**
- * Alta y edición de un restaurante.
+ * Alta y edición de una suscripción (negocio).
  *
- * - Al crear: datos del restaurante + cuenta del dueño + primera licencia.
- * - Al editar: datos del restaurante y del dueño (las licencias se manejan en el detalle).
+ * - Al crear: datos del negocio + cuenta del dueño + primera licencia.
+ * - Al editar: datos del negocio y del dueño (las licencias se manejan en el detalle).
  */
 class Formulario extends Component
 {
-    public ?Restaurante $restaurante = null;
+    public ?Negocio $negocio = null;
 
-    // Restaurante
+    // Negocio
     public string $nombre = '';
 
     public string $rfc = '';
@@ -51,18 +51,18 @@ class Formulario extends Component
 
     public string $precio = '';
 
-    public function mount(?Restaurante $restaurante = null): void
+    public function mount(?Negocio $negocio = null): void
     {
-        if ($restaurante?->exists) {
-            $this->restaurante = $restaurante->load('dueno');
+        if ($negocio?->exists) {
+            $this->negocio = $negocio->load('dueno');
             $this->fill([
-                'nombre' => $restaurante->nombre,
-                'rfc' => (string) $restaurante->rfc,
-                'telefono' => (string) $restaurante->telefono,
-                'correo' => (string) $restaurante->correo,
-                'direccion' => (string) $restaurante->direccion,
-                'duenoNombre' => (string) $restaurante->dueno?->name,
-                'duenoCorreo' => (string) $restaurante->dueno?->email,
+                'nombre' => $negocio->nombre,
+                'rfc' => (string) $negocio->rfc,
+                'telefono' => (string) $negocio->telefono,
+                'correo' => (string) $negocio->correo,
+                'direccion' => (string) $negocio->direccion,
+                'duenoNombre' => (string) $negocio->dueno?->name,
+                'duenoCorreo' => (string) $negocio->dueno?->email,
             ]);
 
             return;
@@ -74,7 +74,7 @@ class Formulario extends Component
 
     public function esEdicion(): bool
     {
-        return $this->restaurante !== null;
+        return $this->negocio !== null;
     }
 
     /** Al cambiar plan o meses se recalcula el precio sugerido. */
@@ -105,7 +105,7 @@ class Formulario extends Component
 
     protected function rules(): array
     {
-        $duenoId = $this->restaurante?->dueno_id;
+        $duenoId = $this->negocio?->dueno_id;
 
         $reglas = [
             'nombre' => ['required', 'string', 'max:120'],
@@ -133,10 +133,10 @@ class Formulario extends Component
     protected function validationAttributes(): array
     {
         return [
-            'nombre' => 'nombre del restaurante',
+            'nombre' => 'nombre del negocio',
             'rfc' => 'RFC',
             'telefono' => 'teléfono',
-            'correo' => 'correo del restaurante',
+            'correo' => 'correo del negocio',
             'direccion' => 'dirección',
             'duenoNombre' => 'nombre del dueño',
             'duenoCorreo' => 'correo del dueño',
@@ -161,22 +161,22 @@ class Formulario extends Component
 
         $datos = $this->validate();
 
-        $restaurante = DB::transaction(fn () => $this->esEdicion()
+        $negocio = DB::transaction(fn () => $this->esEdicion()
             ? $this->actualizar($datos)
             : $this->crear($datos));
 
         Flux::toast(
             variant: 'success',
-            heading: $this->esEdicion() ? 'Cambios guardados' : 'Restaurante registrado',
+            heading: $this->esEdicion() ? 'Cambios guardados' : 'Suscripción registrada',
             text: $this->esEdicion()
-                ? "Se actualizaron los datos de {$restaurante->nombre}."
-                : "{$restaurante->nombre} ya puede entrar con la cuenta de su dueño.",
+                ? "Se actualizaron los datos de {$negocio->nombre}."
+                : "{$negocio->nombre} ya puede entrar con la cuenta de su dueño.",
         );
 
-        $this->redirectRoute('admin.restaurantes.detalle', $restaurante, navigate: true);
+        $this->redirectRoute('admin.suscripciones.detalle', $negocio, navigate: true);
     }
 
-    private function crear(array $datos): Restaurante
+    private function crear(array $datos): Negocio
     {
         $dueno = User::create([
             'name' => $datos['duenoNombre'],
@@ -187,19 +187,19 @@ class Formulario extends Component
         $dueno->forceFill(['email_verified_at' => now()])->save();
         $dueno->assignRole(Rol::Dueno->value);
 
-        $restaurante = Restaurante::create([
-            ...$this->datosRestaurante($datos),
+        $negocio = Negocio::create([
+            ...$this->datosNegocio($datos),
             'dueno_id' => $dueno->id,
         ]);
 
-        $dueno->restaurante()->associate($restaurante)->save();
+        $dueno->negocio()->associate($negocio)->save();
 
         $plan = PlanLicencia::from($datos['plan']);
         $inicio = Carbon::parse($datos['fechaInicio']);
 
-        $restaurante->licencias()->create([
+        $negocio->licencias()->create([
             'plan' => $plan,
-            'max_sucursales' => $plan->maxSucursales(),
+            'max_restaurantes' => $plan->maxRestaurantes(),
             'precio' => $datos['precio'],
             'fecha_inicio' => $inicio,
             'fecha_fin' => $inicio->copy()->addMonthsNoOverflow((int) $datos['meses'])->subDay(),
@@ -207,14 +207,14 @@ class Formulario extends Component
             'notas' => 'Licencia inicial',
         ]);
 
-        return $restaurante;
+        return $negocio;
     }
 
-    private function actualizar(array $datos): Restaurante
+    private function actualizar(array $datos): Negocio
     {
-        $this->restaurante->update($this->datosRestaurante($datos));
+        $this->negocio->update($this->datosNegocio($datos));
 
-        if ($dueno = $this->restaurante->dueno) {
+        if ($dueno = $this->negocio->dueno) {
             $dueno->fill(['name' => $datos['duenoNombre'], 'email' => $datos['duenoCorreo']]);
 
             if (filled($datos['duenoPassword'])) {
@@ -224,10 +224,10 @@ class Formulario extends Component
             $dueno->save();
         }
 
-        return $this->restaurante;
+        return $this->negocio;
     }
 
-    private function datosRestaurante(array $datos): array
+    private function datosNegocio(array $datos): array
     {
         return [
             'nombre' => $datos['nombre'],
@@ -240,7 +240,7 @@ class Formulario extends Component
 
     public function render()
     {
-        return view('livewire.admin.restaurantes.formulario')
-            ->title($this->esEdicion() ? 'Editar restaurante' : 'Nuevo restaurante');
+        return view('livewire.admin.suscripciones.formulario')
+            ->title($this->esEdicion() ? 'Editar suscripción' : 'Nueva suscripción');
     }
 }

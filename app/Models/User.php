@@ -20,6 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
+ * @property int|null $negocio_id
  * @property int|null $restaurante_id
  * @property bool $activo
  * @property list<string>|null $recorridos_vistos
@@ -82,7 +83,13 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return null;
     }
 
-    /** Restaurante al que pertenece (null para el super admin). */
+    /** Negocio al que pertenece (null para el super admin). */
+    public function negocio(): BelongsTo
+    {
+        return $this->belongsTo(Negocio::class);
+    }
+
+    /** Restaurante donde trabaja (solo encargados y vendedores). */
     public function restaurante(): BelongsTo
     {
         return $this->belongsTo(Restaurante::class);
