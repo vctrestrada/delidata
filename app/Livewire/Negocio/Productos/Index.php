@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Negocio\Productos;
 
+use App\Events\MenuActualizado;
 use App\Livewire\Concerns\AlcanceDelNegocio;
 use App\Models\Categoria;
 use App\Models\Producto;
+use App\Support\TiempoReal;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -80,6 +82,7 @@ class Index extends Component
         $producto = $this->buscarProducto($id);
         $producto->update(['activo' => ! $producto->activo]);
         unset($this->productos);
+        $this->avisarMenu($producto);
 
         Flux::toast(
             variant: 'success',
@@ -109,9 +112,20 @@ class Index extends Component
         $this->redirectRoute('negocio.productos.editar', $copia, navigate: true);
     }
 
+    /** Avisa a los puntos de venta de los restaurantes donde se vende el producto. */
+    private function avisarMenu(Producto $producto): void
+    {
+        $restaurantes = $producto->restaurantes()->pluck('restaurantes.id')->all();
+
+        if ($restaurantes !== []) {
+            TiempoReal::emitir(new MenuActualizado($restaurantes));
+        }
+    }
+
     public function eliminar(int $id): void
     {
         $producto = $this->buscarProducto($id);
+        $this->avisarMenu($producto);
         $producto->delete();
         unset($this->productos);
 

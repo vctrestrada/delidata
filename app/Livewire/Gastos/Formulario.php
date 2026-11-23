@@ -4,8 +4,10 @@ namespace App\Livewire\Gastos;
 
 use App\Enums\CategoriaGasto;
 use App\Enums\MetodoPago;
+use App\Events\GastosActualizados;
 use App\Livewire\Concerns\AlcanceDelNegocio;
 use App\Models\Gasto;
+use App\Support\TiempoReal;
 use Flux\Flux;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -143,7 +145,13 @@ class Formulario extends Component
                 : null;
         }
 
+        $restauranteAnterior = $gasto->getOriginal('restaurante_id');
         $gasto->save();
+
+        TiempoReal::emitir(new GastosActualizados($gasto->negocio_id, $gasto->restaurante_id));
+        if ($restauranteAnterior && $restauranteAnterior !== $gasto->restaurante_id) {
+            TiempoReal::emitir(new GastosActualizados($gasto->negocio_id, $restauranteAnterior));
+        }
 
         Flux::toast(
             variant: 'success',

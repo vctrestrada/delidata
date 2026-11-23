@@ -110,13 +110,20 @@
         @endif
     </section>
 
-    {{-- Próximos módulos --}}
-    <section class="space-y-3">
-        <flux:heading size="lg">Próximamente</flux:heading>
-        <div class="grid gap-4 md:grid-cols-2">
-            <x-panel.modulo icono="chart-bar" entrega="7" titulo="Dashboard" descripcion="Velocímetro de gastos contra ventas." />
+    {{-- Acceso al dashboard --}}
+    <a href="{{ route('negocio.dashboard') }}" wire:navigate
+       class="group flex items-center justify-between gap-4 rounded-xl border border-orange-200 bg-gradient-to-r from-orange-50 to-white p-6 transition hover:border-orange-400">
+        <div class="flex items-center gap-4">
+            <div class="flex size-12 items-center justify-center rounded-xl bg-orange-500 text-white">
+                <flux:icon name="chart-pie" variant="outline" class="size-6" />
+            </div>
+            <div>
+                <flux:heading size="lg">¿Cómo va tu negocio?</flux:heading>
+                <flux:text class="text-sm">Velocímetro de gastos contra ventas, tus productos estrella y tus horas pico.</flux:text>
+            </div>
         </div>
-    </section>
+        <flux:icon name="arrow-right" class="size-5 text-orange-500 transition group-hover:translate-x-1" />
+    </a>
 
     <x-recorrido clave="negocio.inicio" :pasos="[
         ['titulo' => 'Bienvenido a tu negocio', 'descripcion' => 'Eres el administrador de tu negocio en Delidata. Desde aquí registras tus restaurantes y a tu personal. Te muestro lo básico.'],

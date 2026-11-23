@@ -3,8 +3,11 @@
 namespace App\Livewire\Gastos;
 
 use App\Enums\CategoriaGasto;
+use App\Events\GastosActualizados;
 use App\Livewire\Concerns\AlcanceDelNegocio;
+use App\Livewire\Concerns\EscuchaTiempoReal;
 use App\Models\Gasto;
+use App\Support\TiempoReal;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +25,7 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use AlcanceDelNegocio;
+    use EscuchaTiempoReal;
     use WithPagination;
 
     #[Url(except: '')]
@@ -140,8 +144,15 @@ class Index extends Component
         $gasto = $this->consultaGastos()->findOrFail($id);
         $gasto->delete();
         unset($this->gastos, $this->resumen);
+        TiempoReal::emitir(new GastosActualizados($gasto->negocio_id, $gasto->restaurante_id));
 
         Flux::toast(variant: 'success', text: "Se eliminó el gasto «{$gasto->concepto}».");
+    }
+
+    protected function eventosTiempoReal(): array
+    {
+        // Las ventas también cambian la utilidad que se muestra arriba.
+        return ['gastos.actualizados', 'venta.registrada', 'venta.cancelada'];
     }
 
     public function render()

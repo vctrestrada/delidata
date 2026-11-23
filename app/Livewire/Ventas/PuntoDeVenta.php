@@ -5,6 +5,7 @@ namespace App\Livewire\Ventas;
 use App\Actions\Ventas\RegistrarVenta;
 use App\Enums\MetodoPago;
 use App\Livewire\Concerns\AlcanceDelNegocio;
+use App\Livewire\Concerns\EscuchaTiempoReal;
 use App\Models\Producto;
 use App\Models\Restaurante;
 use App\Models\Venta;
@@ -22,6 +23,7 @@ use Livewire\Component;
 class PuntoDeVenta extends Component
 {
     use AlcanceDelNegocio;
+    use EscuchaTiempoReal;
 
     public string $buscar = '';
 
@@ -234,6 +236,33 @@ class PuntoDeVenta extends Component
                 ? 'Entrega $'.number_format((float) $venta->cambio, 2).' de cambio.'
                 : 'Cobro registrado.',
         );
+    }
+
+    protected function eventosTiempoReal(): array
+    {
+        return ['menu.actualizado'];
+    }
+
+    /**
+     * El menú cambió (algo se agotó, se desactivó o cambió de precio):
+     * se recarga el catálogo y se quita del carrito lo que ya no se puede vender.
+     */
+    protected function despuesDeEvento(array $datos): void
+    {
+        unset($this->productosDisponibles, $this->categorias, $this->catalogo, $this->renglones, $this->totales);
+
+        $quitados = collect(array_keys($this->carrito))
+            ->reject(fn ($id) => $this->productosDisponibles->contains('id', $id));
+
+        foreach ($quitados as $id) {
+            unset($this->carrito[$id]);
+        }
+
+        if ($quitados->isNotEmpty()) {
+            Flux::toast(variant: 'warning', heading: 'Menú actualizado', text: 'Se quitaron de la venta productos que ya no están disponibles.');
+        } elseif (! empty($datos['mensaje'])) {
+            Flux::toast(variant: 'warning', heading: 'Menú actualizado', text: $datos['mensaje']);
+        }
     }
 
     public function nuevaVenta(): void

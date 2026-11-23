@@ -6,6 +6,7 @@ use App\Http\Controllers\LicenciaInactivaController;
 use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\TicketController;
 use App\Livewire\Admin;
+use App\Livewire\Dashboard;
 use App\Livewire\Encargado;
 use App\Livewire\Gastos;
 use App\Livewire\Negocio;
@@ -47,6 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Dueño: administrador de su negocio (restaurantes y personal).
         Route::middleware('role:dueno')->prefix('negocio')->name('negocio.')->group(function () {
             Route::livewire('/', Negocio\Inicio::class)->name('inicio');
+            Route::livewire('dashboard', Dashboard\Panel::class)->name('dashboard');
 
             Route::livewire('restaurantes', Negocio\Restaurantes\Index::class)->name('restaurantes.index');
             Route::livewire('restaurantes/nuevo', Negocio\Restaurantes\Formulario::class)->name('restaurantes.crear');
@@ -70,6 +72,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Encargado: su restaurante y sus vendedores.
         Route::middleware('role:encargado')->prefix('mi-restaurante')->name('encargado.')->group(function () {
             Route::livewire('/', Encargado\Inicio::class)->name('inicio');
+            Route::livewire('dashboard', Dashboard\Panel::class)->name('dashboard');
             Route::livewire('menu', Encargado\Menu::class)->name('menu');
             Route::livewire('ventas', Ventas\Historial::class)->name('ventas');
             Route::livewire('gastos', Gastos\Index::class)->name('gastos.index');

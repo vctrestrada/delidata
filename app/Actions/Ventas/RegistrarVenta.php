@@ -3,11 +3,13 @@
 namespace App\Actions\Ventas;
 
 use App\Enums\EstadoVenta;
+use App\Events\VentaRegistrada;
 use App\Enums\MetodoPago;
 use App\Models\Producto;
 use App\Models\Restaurante;
 use App\Models\User;
 use App\Models\Venta;
+use App\Support\TiempoReal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -37,7 +39,7 @@ class RegistrarVenta
             throw ValidationException::withMessages(['carrito' => 'Agrega al menos un producto.']);
         }
 
-        return DB::transaction(function () use ($vendedor, $carrito, $metodo, $recibido, $descuento, $notas) {
+        $venta = DB::transaction(function () use ($vendedor, $carrito, $metodo, $recibido, $descuento, $notas) {
             // Se bloquea el restaurante para que dos ventas simultáneas no tomen el mismo folio.
             $restaurante = Restaurante::whereKey($vendedor->restaurante_id)->lockForUpdate()->firstOrFail();
 
@@ -102,5 +104,10 @@ class RegistrarVenta
 
             return $venta->load('detalles');
         });
+
+        // Avisar en tiempo real al dueño y al encargado.
+        TiempoReal::emitir(new VentaRegistrada($venta));
+
+        return $venta;
     }
 }

@@ -25,6 +25,7 @@
                     ],
                     \App\Enums\Rol::Dueno => [
                         ['Inicio', 'home', 'negocio.inicio', 'negocio.inicio', null],
+                        ['Dashboard', 'chart-pie', 'negocio.dashboard', 'negocio.dashboard', 'menu-dashboard'],
                         ['Restaurantes', 'building-storefront', 'negocio.restaurantes.index', 'negocio.restaurantes.*', 'menu-restaurantes'],
                         ['Productos', 'book-open', 'negocio.productos.index', 'negocio.productos.*', 'menu-productos'],
                         ['Ventas', 'receipt-percent', 'negocio.ventas', 'negocio.ventas', 'menu-ventas'],
@@ -33,6 +34,7 @@
                     ],
                     \App\Enums\Rol::Encargado => [
                         ['Inicio', 'home', 'encargado.inicio', 'encargado.inicio', null],
+                        ['Dashboard', 'chart-pie', 'encargado.dashboard', 'encargado.dashboard', 'menu-dashboard'],
                         ['Menú', 'book-open', 'encargado.menu', 'encargado.menu', 'menu-menu'],
                         ['Ventas', 'receipt-percent', 'encargado.ventas', 'encargado.ventas', 'menu-ventas'],
                         ['Gastos', 'banknotes', 'encargado.gastos.index', 'encargado.gastos.*', 'menu-gastos'],

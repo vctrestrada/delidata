@@ -8,6 +8,7 @@
             : 'Ventas de todos tus restaurantes. Filtra por periodo, restaurante, vendedor o forma de pago.'"
     >
         <x-slot:acciones>
+            <x-panel.en-vivo />
             <x-recorrido.boton />
         </x-slot:acciones>
     </x-panel.encabezado>

@@ -7,6 +7,7 @@ use App\Enums\EstadoVenta;
 use App\Enums\MetodoPago;
 use App\Enums\Rol;
 use App\Livewire\Concerns\AlcanceDelNegocio;
+use App\Livewire\Concerns\EscuchaTiempoReal;
 use App\Models\User;
 use App\Models\Venta;
 use Flux\Flux;
@@ -27,6 +28,7 @@ use Livewire\WithPagination;
 class Historial extends Component
 {
     use AlcanceDelNegocio;
+    use EscuchaTiempoReal;
     use WithPagination;
 
     #[Url(except: '')]
@@ -162,6 +164,11 @@ class Historial extends Component
         unset($this->ventas, $this->resumen);
 
         Flux::toast(variant: 'success', text: "La venta #{$venta->folioFormateado()} se canceló.");
+    }
+
+    protected function eventosTiempoReal(): array
+    {
+        return ['venta.registrada', 'venta.cancelada'];
     }
 
     public function render()

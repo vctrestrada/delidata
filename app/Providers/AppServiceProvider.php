@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -24,6 +25,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->registrarReverbEnDesarrollo();
+    }
+
+    /**
+     * Agrega el servidor de Reverb a `composer run dev` para que
+     * el tiempo real funcione sin abrir otra terminal.
+     */
+    protected function registrarReverbEnDesarrollo(): void
+    {
+        if ($this->app->runningInConsole() && class_exists(\Laravel\Reverb\ReverbServiceProvider::class)) {
+            DevCommands::artisan('reverb:start', 'reverb');
+        }
     }
 
     /**

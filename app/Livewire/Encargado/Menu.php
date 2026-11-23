@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Encargado;
 
+use App\Events\MenuActualizado;
 use App\Livewire\Concerns\AlcanceDelNegocio;
 use App\Models\Producto;
 use App\Models\Restaurante;
+use App\Support\TiempoReal;
 use Flux\Flux;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -55,6 +57,10 @@ class Menu extends Component
 
         $this->restaurante->productos()->updateExistingPivot($productoId, ['disponible' => $disponible]);
         unset($this->menu, $this->agotados);
+        TiempoReal::emitir(new MenuActualizado(
+            [$this->restaurante->id],
+            $disponible ? "«{$producto->nombre}» vuelve a estar disponible." : "«{$producto->nombre}» se agotó.",
+        ));
 
         Flux::toast(
             variant: $disponible ? 'success' : 'warning',
@@ -68,6 +74,7 @@ class Menu extends Component
             ->where('restaurante_id', $this->restaurante->id)
             ->update(['disponible' => true, 'updated_at' => now()]);
         unset($this->menu, $this->agotados);
+        TiempoReal::emitir(new MenuActualizado([$this->restaurante->id], 'Todos los productos están disponibles.'));
 
         Flux::toast(variant: 'success', text: 'Todos los productos están disponibles otra vez.');
     }

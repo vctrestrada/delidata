@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Negocio\Productos;
 
+use App\Events\MenuActualizado;
 use App\Livewire\Concerns\AlcanceDelNegocio;
 use App\Models\Categoria;
 use App\Models\Producto;
+use App\Support\TiempoReal;
 use Flux\Flux;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -146,6 +148,7 @@ class Formulario extends Component
     {
         $datos = $this->validate();
         $idsPermitidos = $this->restaurantesDisponibles()->pluck('id')->all();
+        $antes = $this->producto?->restaurantes()->pluck('restaurantes.id')->all() ?? [];
 
         DB::transaction(function () use ($datos, $idsPermitidos) {
             $producto = $this->producto ?? new Producto(['negocio_id' => $this->usuario()->negocio_id]);
@@ -183,6 +186,11 @@ class Formulario extends Component
             $producto->restaurantes()->sync($sincronizar);
             $this->producto = $producto;
         });
+
+        $afectados = array_values(array_unique([...$antes, ...$this->producto->restaurantes()->pluck('restaurantes.id')->all()]));
+        if ($afectados !== []) {
+            TiempoReal::emitir(new MenuActualizado($afectados));
+        }
 
         Flux::toast(variant: 'success', text: "Se guardó «{$this->producto->nombre}».");
         $this->redirectRoute('negocio.productos.index', navigate: true);

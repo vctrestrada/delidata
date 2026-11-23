@@ -3,8 +3,10 @@
 namespace App\Actions\Ventas;
 
 use App\Enums\EstadoVenta;
+use App\Events\VentaCancelada;
 use App\Models\User;
 use App\Models\Venta;
+use App\Support\TiempoReal;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -25,6 +27,8 @@ class CancelarVenta
             'cancelada_at' => now(),
             'motivo_cancelacion' => trim($motivo),
         ]);
+
+        TiempoReal::emitir(new VentaCancelada($venta));
 
         return $venta;
     }
