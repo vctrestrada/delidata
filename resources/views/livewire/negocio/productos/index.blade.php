@@ -89,7 +89,12 @@
                             @endif
                         </flux:table.cell>
                         <flux:table.cell>
-                            <flux:switch :checked="$producto->activo" wire:click="alternarActivo({{ $producto->id }})" aria-label="Activar o desactivar {{ $producto->nombre }}" />
+                            <x-panel.interruptor
+                                :activo="$producto->activo"
+                                wire:click="alternarActivo({{ $producto->id }})"
+                                wire:confirm="{{ $producto->activo ? '¿Ocultar «'.$producto->nombre.'» del menú de todos tus restaurantes?' : '¿Volver a mostrar «'.$producto->nombre.'» en el menú?' }}"
+                                accesible="Activar o desactivar {{ $producto->nombre }}"
+                            />
                         </flux:table.cell>
                         <flux:table.cell align="end">
                             <flux:dropdown position="bottom" align="end">

@@ -203,12 +203,12 @@
             </section>
 
             <section class="rounded-xl border border-zinc-200 bg-white p-6" data-tour="activo">
-                <flux:switch
-                    :checked="$negocio->activo"
+                <x-panel.interruptor
+                    :activo="$negocio->activo"
                     wire:click="alternarActivo"
                     wire:confirm="{{ $negocio->activo ? '¿Desactivar el negocio? Su personal ya no podrá entrar.' : '¿Activar el negocio?' }}"
-                    label="Negocio activo"
-                    description="Apágalo para bloquear la entrada de todo su personal sin borrar sus datos."
+                    etiqueta="Negocio activo"
+                    descripcion="Apágalo para bloquear la entrada de todo su personal sin borrar sus datos."
                 />
             </section>
         </div>

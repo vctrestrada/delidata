@@ -87,35 +87,82 @@ select:focus[data-flux-control] {
 
 /* ---------------------------------------------------------------
    Recorridos guiados (Driver.js) con la paleta de Delidata
+   Estructura del globo:
+     título · descripción · [No volver a mostrar]
+     ─────────────────────────────────────────────
+     Paso 2 de 5                       (barra de progreso)
+     Saltar guía          [Anterior] [Siguiente]
 ---------------------------------------------------------------- */
 .driver-popover.delidata-recorrido {
-    @apply rounded-xl border border-zinc-200 bg-white p-5 text-zinc-700 shadow-lg;
-    max-width: 22rem;
+    @apply rounded-2xl border border-zinc-200 bg-white text-zinc-700 shadow-xl;
+    width: min(26rem, calc(100vw - 2rem));
+    max-width: min(26rem, calc(100vw - 2rem));
+    min-width: 0;
+    padding: 1.25rem 1.25rem 1rem;
 }
 
 .driver-popover.delidata-recorrido .driver-popover-title {
-    @apply text-base font-semibold text-zinc-900;
+    @apply pr-8 text-base leading-snug font-semibold text-zinc-900;
 }
 
 .driver-popover.delidata-recorrido .driver-popover-description {
-    @apply mt-1 text-sm leading-relaxed text-zinc-600;
+    @apply mt-2 text-sm leading-relaxed text-zinc-600;
+    overflow-wrap: anywhere;
 }
 
+.driver-popover.delidata-recorrido .driver-popover-close-btn {
+    @apply top-3 right-3 size-7 rounded-full text-lg text-zinc-400 hover:bg-zinc-100 hover:text-orange-600;
+}
+
+.driver-popover.delidata-recorrido .driver-popover-footer {
+    @apply mt-4 flex flex-wrap items-center gap-3 border-t border-zinc-100 pt-3;
+}
+
+/* Progreso en su propia línea, arriba de los botones */
 .driver-popover.delidata-recorrido .driver-popover-progress-text {
     @apply text-xs font-medium text-orange-600;
+    order: -1;
+    flex-basis: 100%;
+}
+
+.driver-popover.delidata-recorrido .driver-popover-navigation-btns {
+    @apply flex flex-1 items-center justify-end gap-2;
+    flex-basis: 100%;
 }
 
 .driver-popover.delidata-recorrido .driver-popover-footer button {
-    @apply rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 shadow-none;
+    @apply m-0 inline-flex items-center justify-center whitespace-nowrap rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-sm leading-none font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50;
     text-shadow: none;
 }
 
 .driver-popover.delidata-recorrido .driver-popover-footer .driver-popover-next-btn {
-    @apply border-orange-500 bg-orange-500 text-white hover:bg-orange-600;
+    @apply border-orange-500 bg-orange-500 text-white hover:border-orange-600 hover:bg-orange-600;
 }
 
-.driver-popover.delidata-recorrido .driver-popover-close-btn {
-    @apply text-zinc-400 hover:text-orange-600;
+/* En el primer paso no se muestra "Anterior" deshabilitado */
+.driver-popover.delidata-recorrido .driver-popover-prev-btn.driver-popover-btn-disabled {
+    display: none;
+}
+
+/* "Saltar guía": enlace discreto a la izquierda */
+.driver-popover.delidata-recorrido .driver-popover-footer .delidata-saltar {
+    @apply mr-auto border-transparent bg-transparent px-1 text-xs text-zinc-500 hover:bg-transparent hover:text-orange-600 hover:underline;
+}
+
+/* "No volver a mostrar guías": debajo de la descripción */
+.driver-popover.delidata-recorrido .delidata-no-mostrar {
+    @apply mt-3 inline-flex items-center gap-1 text-left text-xs text-zinc-400 underline-offset-2 hover:text-orange-600 hover:underline;
+}
+
+/* Celulares: botones a todo lo ancho */
+@media (max-width: 480px) {
+    .driver-popover.delidata-recorrido .driver-popover-navigation-btns {
+        @apply flex-wrap;
+    }
+    .driver-popover.delidata-recorrido .driver-popover-footer .delidata-saltar {
+        flex-basis: 100%;
+        @apply mr-0 justify-start;
+    }
 }
 
 /* ---------------------------------------------------------------
@@ -194,14 +241,6 @@ html {
 /* Globo del recorrido: entrada suave */
 .driver-popover.delidata-recorrido {
     animation: var(--animate-aparecer);
-}
-
-.driver-popover.delidata-recorrido .delidata-saltar {
-    @apply mr-auto rounded-lg px-2 py-1.5 text-xs font-medium text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800;
-}
-
-.driver-popover.delidata-recorrido .delidata-no-mostrar {
-    @apply mt-3 block w-full border-t border-zinc-100 pt-3 text-left text-xs text-zinc-400 hover:text-orange-600;
 }
 
 /* Respeta a quien prefiere menos movimiento */

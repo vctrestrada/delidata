@@ -83,11 +83,11 @@
                         </flux:table.cell>
 
                         <flux:table.cell>
-                            <flux:switch
-                                :checked="$negocio->activo"
+                            <x-panel.interruptor
+                                :activo="$negocio->activo"
                                 wire:click="alternarActivo({{ $negocio->id }})"
                                 wire:confirm="{{ $negocio->activo ? '¿Desactivar '.$negocio->nombre.'? Su personal ya no podrá entrar al sistema.' : '¿Activar '.$negocio->nombre.'?' }}"
-                                aria-label="Activar o desactivar {{ $negocio->nombre }}"
+                                accesible="Activar o desactivar {{ $negocio->nombre }}"
                             />
                         </flux:table.cell>
 

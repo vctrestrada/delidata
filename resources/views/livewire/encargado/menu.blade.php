@@ -43,8 +43,8 @@
                                 <div class="text-sm font-semibold text-orange-600">${{ number_format($precio, 2) }}</div>
                             </div>
                             <div class="flex flex-col items-end gap-1">
-                                <flux:switch :checked="$disponible" wire:click="alternarDisponible({{ $producto->id }})"
-                                    aria-label="Disponible: {{ $producto->nombre }}" />
+                                <x-panel.interruptor :activo="$disponible" wire:click="alternarDisponible({{ $producto->id }})"
+                                    accesible="Disponible: {{ $producto->nombre }}" />
                                 <span @class(['text-[11px] font-medium', 'text-green-600' => $disponible, 'text-red-600' => ! $disponible])>
                                     {{ $disponible ? 'Disponible' : 'Agotado' }}
                                 </span>
