@@ -15,7 +15,7 @@
 </div>
 
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 ### Jerarquía de roles
 
@@ -54,7 +54,7 @@ Super admin ──► administra las suscripciones (planes, vigencia, renovacion
 
 ---
 
-## 🧱 Stack
+##  Stack
 
 - **Backend:** Laravel 13 · PHP 8.4+ · PostgreSQL
 - **Frontend:** Livewire 4 · Flux UI · Tailwind CSS 4 · Alpine.js
@@ -65,7 +65,7 @@ Super admin ──► administra las suscripciones (planes, vigencia, renovacion
 
 ---
 
-## 🔐 Decisiones de seguridad
+##  Decisiones de seguridad
 
 - **Aislamiento entre negocios:** todas las consultas pasan por el *trait* `AlcanceDelNegocio`, así que un dueño nunca puede ver datos de otro negocio y un encargado solo ve su restaurante. Un recurso ajeno responde **404**, sin revelar que existe.
 - **Precios del lado del servidor:** el punto de venta solo envía *qué productos y cuántos*. `RegistrarVenta` vuelve a leer los precios y la disponibilidad de la base de datos.
@@ -78,7 +78,7 @@ Super admin ──► administra las suscripciones (planes, vigencia, renovacion
 
 ---
 
-## 🚀 Instalación
+##  Instalación
 
 Requisitos: PHP 8.4+ (con `pdo_pgsql`), Composer, Node 20+ y PostgreSQL.
 
@@ -128,7 +128,7 @@ Los datos de ejemplo incluyen **45 días de ventas y gastos**. Centro deja buena
 
 ---
 
-## 🧪 Pruebas
+##  Pruebas
 
 ```bash
 php artisan test
@@ -138,7 +138,7 @@ Cubren suscripciones y licencias, límites del plan, aislamiento entre negocios 
 
 ---
 
-## 📁 Estructura principal
+##  Estructura principal
 
 ```
 app/
