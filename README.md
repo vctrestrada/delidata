@@ -14,19 +14,6 @@
 
 </div>
 
----
-
-## 📸 Capturas
-
-| Dashboard del dueño | Punto de venta |
-|---|---|
-| ![Dashboard](docs/capturas/dashboard.png) | ![Punto de venta](docs/capturas/punto-de-venta.png) |
-
-| Recorrido guiado | Gastos |
-|---|---|
-| ![Recorrido guiado](docs/capturas/recorrido.png) | ![Gastos](docs/capturas/gastos.png) |
-
----
 
 ## ✨ Funcionalidades
 
